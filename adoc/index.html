@@ -187,6 +187,7 @@ textarea{
     font-size:10px;
     border: #f7f7f7 1px solid;
     padding-left: 5px;
+    width: 25%;
 }
 .ApiName{
     color:#000;
@@ -311,7 +312,7 @@ textarea{
                 </tr>
                 <tr>
                     <td style="text-align: center">说明</td>
-                    <td colspan="3"><textarea style="width:80%" id="new_apiexp"></textarea></td>
+                    <td colspan="3"><textarea style="width:80%" name="new_apiexp"></textarea></td>
                 </tr>
                 <tr>
                     <th colspan="4" style="cursor:pointer;" onclick="head_newtr()">Header + </th>
@@ -380,7 +381,7 @@ textarea{
             <span class="dspanExp" name="object_host"></span>
             <div style="margin-top:10px;"></div>
             <div id="ApiListTbody">
-                <span class="dspanName" onclick="api_select(id)">用户接口-用户登录统计<span class="bgget"></span></span>
+                <span class="dspanName" onclick="api_select('{api_id}')">接口名称<span class="bgget"></span></span>
             </div>
         </div>
     </div>
@@ -389,65 +390,75 @@ textarea{
         <div class="dspan" style="font-size:24px;margin-bottom:10px;" name="object_name">项目名称</div>
         <div class="dspan" style="font-size:12px;margin-bottom:5px;" name="object_host">项目主地址</div>
         <div class="dspan" style="font-size:12px;margin-bottom:5px;" name="object_header">全局发送数据</div>
-        <div class="dtr" >
-            <span class="dspan ApiName" >DDI-精灵数据中心下行接口文档<span class="bgput"></span></span>
-            <div style="height:5px;"></div>
-            <span class="dspan ApiURL">http://abc.com</span>
-            <span class="dspan">本接口非实时更新接口，每日24点更新。 统计的是注册地址，并非登录地址</span>
-            <div style="height:20px;"></div>
-            <span class="dspan">Header</span>
-            <table width="100%" class="eve_table">
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Long</th>
-                    <th>Empty</th>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                </tr>
-            </table>
-            
-            <span class="dspan">Response</span>
-            <table width="100%" class="eve_table">
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Long</th>
-                    <th>Empty</th>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                </tr>
-            </table>
-            
-            <span class="dspan">Request</span>
-            <table width="100%" class="eve_table">
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Long</th>
-                    <th>Empty</th>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                </tr>
-            </table>
+        
+        <div id="ApiTabTbody">
+            <div class="dtr" api_id="{api_id}">
+                <span class="dspan ApiName" >{api_name}<span class="bg{api_type}"></span></span>
+                <div style="height:5px;"></div>
+                <span class="dspan ApiURL">{api_host}</span>
+                <span class="dspan">{api_exp}</span>
+                <div style="height:20px;"></div>
+                
+                <span class="dspan">Header</span>
+                <table width="100%" class="eve_table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Long</th>
+                        <th>Empty</th>
+                    </tr>
+                    <tbody id="ApiTabTbodyHeader">
+                    <tr>
+                        <td>{name}</td>
+                        <td>{value}</td>
+                        <td>{exp}</td>
+                        <td>{empty}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <span class="dspan">Response</span>
+                <table width="100%" class="eve_table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Long</th>
+                        <th>Empty</th>
+                    </tr>
+                    <tbody id="ApiTabTbodyResponse">
+                    <tr>
+                        <td>{name}</td>
+                        <td>{value}</td>
+                        <td>{exp}</td>
+                        <td>{empty}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <span class="dspan">Request</span>
+                <table width="100%" class="eve_table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Long</th>
+                        <th>Empty</th>
+                    </tr>
+                    <tbody id="ApiTabTbodyRequest">
+                    <tr>
+                        <td>{name}</td>
+                        <td>{value}</td>
+                        <td>{exp}</td>
+                        <td>{empty}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 <script language="javascript">
 function show_apitab(){
     $("#mask_api").empty();
-    $("#mask_api").append( TplMaskApi );
+    $("#mask_api").append( HTMLTPL['MaskApi'] );
     $("#HeadTbody").empty();
     $('#mask').show();
     $('#mask_api').show();
@@ -459,17 +470,20 @@ function save_api_esc(){
 }
 
 function save_api(cont){
-    
     var PostData    = {
         'object_id'     : $("#object_id").val(),
         'api_name'      : $("input[name='new_apiname']").val(),
         'api_url'       : $("input[name='new_apiname']").val(),
-        'api_type'      : $("input[name='new_apitype']").val(),
+        'api_type'      : $("select[name='new_apitype']").val(),
+        'api_exp'       : $("textarea[name='new_apiexp']").val(),
         'api_header'    : [],
         'api_request'   : [],
         'api_response'  : [],
     };
-    
+    if( PostData['object_id']=="" || PostData['object_id']==undefined  ){
+        alert('请先选择项目');
+        return;
+    }
     for(i=0;i<$("input[name='new_apiheader_name']").length;i++){
         var Tmp = 
         PostData['api_header'][i]    = {
@@ -494,18 +508,17 @@ function save_api(cont){
             'exp':      $("input[name='new_apiresponse_exp']").eq(i).val(),
         }
     }
-    
     $.post('api.php?act=save_api',{"data":PostData},function(Run){
         if( Run.status==true ){
-            
+            if( cont!=true ){
+                save_api_esc();
+            }
+            FunShowApiAll(PostData['object_id']);
         }else{
             alert(Run.error);
+            return ;
         }
     },"json");
-    
-    if( cont!=true ){
-        save_api_esc();
-    }
 }
 
 
@@ -517,14 +530,12 @@ function save_object(){
         'object_host'      : $("input[name='object_host_new']").val(),
         'object_header'    : [],
     };
-    
     for(i=0;i<$("input[name='object_header_name_new']").length;i++){
         PostData['object_header'][i]    = {
             'name'   :    $("input[name='object_header_name_new']").eq(i).val(),
             'value' :    $("input[name='object_header_value_new']").eq(i).val(),
         }
     }
-    
     $.post('api.php?act=save_object',{"data":PostData},function(Run){
         if( Run.status==true&&Run.object_id!="" ){
             $("#ObjHeadTbody").empty();
@@ -546,40 +557,19 @@ function objhead_newtr(){
     if( $("input[name='object_header_name']").length>5 ){
         return;
     }
-    $("#ObjHeadTbody").append( TplObjHeadTbody );
+    $("#ObjHeadTbody").append( HTMLTPL['ObjHeadTbody'] );
 }
 function eve_newtr(){
-    $("#EveTbody").append( TplEveTbody );
+    $("#EveTbody").append( HTMLTPL['EveTbody'] );
 }
 function head_newtr(){
-    $("#HeadTbody").append( TplHeadTbody );
+    $("#HeadTbody").append( HTMLTPL['HeadTbody'] );
 }
 function requ_newtr(){
-    $("#RequTbody").append( TplRequTbody );
+    $("#RequTbody").append( HTMLTPL['RequTbody'] );
 }
 function resp_newtr(){
-    $("#RespTbody").append( TplRespTbody );
-}
-
-
-//开始获取要显示的模板
-if( typeof TplEve == "undefined" ){
-    var TplEveTbody = $("#EveTbody").html();
-}
-if( typeof TplMaskApi == "undefined" ){
-    var TplMaskApi = $("#mask_api").html();
-}
-if( typeof TplHeadTbody == "undefined" ){
-    var TplHeadTbody = $("#HeadTbody").html();
-}
-if( typeof TplRequTbody == "undefined" ){
-    var TplRequTbody = $("#RequTbody").html();
-}
-if( typeof TplRespTbody == "undefined" ){
-    var TplRespTbody = $("#RespTbody").html();
-}
-if( typeof TplObjHeadTbody =="undefined" ){
-    var TplObjHeadTbody = $("#ObjHeadTbody").html();
+    $("#RespTbody").append( HTMLTPL['RespTbody'] );
 }
 
 
@@ -605,11 +595,19 @@ function FunShowObjectList(ObjId){
             $("#object_id").html( Option );
             $("#object_id option[value='"+SeleID+"']").attr("selected",true);
             
-            FunShowObjectInfo(SeleID);
+            if( SeleID!=null ){
+                FunShowObjectInfo(SeleID);
+                window.ObjectSeleID = SeleID;
+            }
         }
     },'json');
 }
 
+/**
+ * 显示项目基本信息
+ * @param {type} SeleID
+ * @returns {undefined}
+ */
 function FunShowObjectInfo(SeleID){
     if( typeof ObjectList=="undefined" )return;
     
@@ -621,12 +619,135 @@ function FunShowObjectInfo(SeleID){
             $("[name='object_exp']").text( Dom['object_exp'] );
             $("[name='object_host']").text( Dom['object_host'] );
             $("[name='object_header']").text( JSON.stringify(Dom['object_header']) );
-            
         }
     }
 }
 
-FunShowObjectList();
+/**
+ * 刷新所有接口
+ * @param {type} ObjectId
+ * @returns {undefined}
+ */
+function FunShowApiAll(ObjectId){
+    if( typeof ObjectId=="undefined"||ObjectId=="" )return;
+    
+    $("#ApiListTbody").empty();
+    
+    $.get("api.php?act=show_api&oid="+ObjectId,function(Json){
+        if( Json['status']!=true ){
+            alert(Json['error']);
+        }else{
+            var ApiDom  = Json['data'];
+            for(var i in ApiDom){
+                var ApiRow          = ApiDom[i];
+                var TPL = HTMLTPL['ApiListTbody'];
+                
+                //替换左侧列表
+                TPL = TPL.replace(/接口名称/,ApiRow['api_name']);
+                TPL = TPL.replace('class="bgget"','class="bg'+ApiRow['api_type']+'"');
+                TPL = TPL.replace("{api_id}",i);
+                $("#ApiListTbody").append(TPL);
+                
+                //开始写入右侧列表
+                var TPL = HTMLTPL['ApiTabTbody'];
+                TPL = TPL.replace('{api_name}',ApiRow['api_name']);
+                TPL = TPL.replace('{api_host}',ApiRow['api_host']);
+                TPL = TPL.replace('{api_exp}',ApiRow['api_exp']);
+                TPL = TPL.replace('{api_type}',ApiRow['api_type']);
+                TPL = TPL.replace("{api_id}",i);
+                
+                var TPLV    = "";
+                if( typeof ApiRow['api_header']!="undefined" && ApiRow['api_header'].length>0 ){
+                    for(ii=0;ii<ApiRow['api_header'].length;ii++){
+                        var TPLT        = HTMLTPL['ApiTabTbodyHeader'];
+                        var Row         = ApiRow['api_header'][ii];
+                        Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
+                        Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
+                        Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
+                        Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
+                        
+                        TPLT = TPLT.replace("{name}",Row['name']);
+                        TPLT = TPLT.replace("{value}",Row['value']);
+                        TPLT = TPLT.replace("{exp}",Row['exp']);
+                        TPLT = TPLT.replace("{empty}",Row['empty']);
+                        TPLV += TPLT;
+                    }
+                }
+                TPL = TPL.replace(/{ApiTabTbodyHeader}/,TPLV);
+                
+                var TPLV    = "";
+                if( typeof ApiRow['api_request']!="undefined" && ApiRow['api_request'].length>0 ){
+                    for(ii=0;ii<ApiRow['api_request'].length;ii++){
+                        var TPLT        = HTMLTPL['ApiTabTbodyRequest'];
+                        var Row         = ApiRow['api_request'][ii];
+                        Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
+                        Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
+                        Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
+                        Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
+                        
+                        TPLT = TPLT.replace("{name}",Row['name']);
+                        TPLT = TPLT.replace("{value}",Row['value']);
+                        TPLT = TPLT.replace("{exp}",Row['exp']);
+                        TPLT = TPLT.replace("{empty}",Row['empty']);
+                        TPLV += TPLT;
+                    }
+                }
+                TPL = TPL.replace(/{ApiTabTbodyRequest}/,TPLV);
+                
+                var TPLV    = "";
+                if( typeof ApiRow['api_response']!="undefined" && ApiRow['api_response'].length>0 ){
+                    for(ii=0;ii<ApiRow['api_response'].length;ii++){
+                        var TPLT        = HTMLTPL['ApiTabTbodyResponse'];
+                        var Row         = ApiRow['api_response'][ii];
+                        Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
+                        Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
+                        Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
+                        Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
+                        
+                        TPLT = TPLT.replace("{name}",Row['name']);
+                        TPLT = TPLT.replace("{value}",Row['value']);
+                        TPLT = TPLT.replace("{exp}",Row['exp']);
+                        TPLT = TPLT.replace("{empty}",Row['empty']);
+                        TPLV += TPLT;
+                    }
+                }
+                TPL = TPL.replace(/{ApiTabTbodyResponse}/,TPLV);
+                
+                $("#ApiTabTbody").append(TPL);
+                
+            }
+        }
+    },'json');
+}
+
+$(document).ready(function(){
+    window.HTMLTPL  = [];
+    
+    //开始获取要显示的模板
+    HTMLTPL['EveTbody']     = $("#EveTbody").html();
+    HTMLTPL['MaskApi']      = $("#mask_api").html();
+    HTMLTPL['HeadTbody']    = $("#HeadTbody").html();
+    HTMLTPL['RequTbody']    = $("#RequTbody").html();
+    HTMLTPL['RespTbody']    = $("#RespTbody").html();
+    HTMLTPL['ObjHeadTbody'] = $("#ObjHeadTbody").html();
+    HTMLTPL['ApiListTbody'] = $("#ApiListTbody").html();
+    HTMLTPL['ApiTabTbodyHeader']    = $("#ApiTabTbodyHeader").html();
+    HTMLTPL['ApiTabTbodyRequest']   = $("#ApiTabTbodyRequest").html();
+    HTMLTPL['ApiTabTbodyResponse']  = $("#ApiTabTbodyResponse").html();
+    $("#ApiTabTbodyHeader").html("{ApiTabTbodyHeader}");
+    $("#ApiTabTbodyRequest").html("{ApiTabTbodyRequest}");
+    $("#ApiTabTbodyResponse").html("{ApiTabTbodyResponse}");
+    HTMLTPL['ApiTabTbody']  = $("#ApiTabTbody").html();
+    
+    $("#ApiListTbody").empty();
+    $("#ApiTabTbody").empty();
+    FunShowObjectList();
+    
+    setTimeout(function(){
+        if( typeof ObjectSeleID!="undefined" )FunShowApiAll(ObjectSeleID);
+    },1000);
+    
+});
 </script>
 </body>
 </html>
