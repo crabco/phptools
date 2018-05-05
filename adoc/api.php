@@ -130,6 +130,14 @@ function run(){
         }
     }
     
+    
+    /**
+     * 删除接口
+     */
+    if( $Act=="del_api" ){
+        $Run['status']  = true;
+    }
+    
     return $Run;
 }
 

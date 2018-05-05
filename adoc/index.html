@@ -30,8 +30,8 @@ body {
     margin-bottom: 40px;
 }
 .dtdl{
-    margin: 40px 0 0 5%;
-    width:20%;
+    margin: 40px 0 0 3%;
+    width:22%;
     min-height: 100px;
     float: left;
     text-align: left;
@@ -150,37 +150,41 @@ select{
     content:"PUT";
     background-color:#b3318b;
     border-radius: 3px;
-    margin-left: 5px;
-    padding:0 7px;
-    color:#fff;
-    width:50px;
+    margin-right: 5px;
+    padding: 1px 5px;
+    color: #fff;
+    width: 50px;
+    font-size: 10px;
 }
 .bgpost:before{
     content:"POST";
     background-color:#364eca;
     border-radius: 3px;
-    margin-left: 5px;
-    padding:0 7px;
-    color:#fff;
-    width:50px;
+    margin-right: 5px;
+    padding: 1px 5px;
+    color: #fff;
+    width: 50px;
+    font-size: 10px;
 }
 .bgget:before{
     content:"GET";
     background-color:#42b34a;
     border-radius: 3px;
-    margin-left: 5px;
-    padding:0 7px;
-    color:#fff;
-    width:50px;
+    margin-right: 5px;
+    padding: 1px 5px;
+    color: #fff;
+    width: 50px;
+    font-size: 10px;
 }
 .bgdelete:before{
     content:"DELETE";
     background-color:#000;
     border-radius: 3px;
-    margin-left: 5px;
-    padding:0 7px;
-    color:#fff;
-    width:50px;
+    margin-right: 5px;
+    padding: 1px 5px;
+    color: #fff;
+    width: 50px;
+    font-size: 10px;
 }
 .eve_table{
     border:#eee 1px solid;
@@ -218,6 +222,38 @@ select{
     width:100%;
     padding: 5px;
     margin-bottom: 5px;
+}
+.iedit{
+    font-family: arial;
+    cursor: pointer;
+    font-size: 6px;
+    border-radius: 2px;
+    background-color: #e5f5e6;
+    color: #FFFFFF;
+    padding:0 1px;
+    margin: 0 1px;
+}
+.iedit:before{
+    content: "edit";
+}
+.iedit:hover{
+    background-color: #258E2C;
+}
+.idel{
+    font-family: arial;
+    cursor: pointer;
+    font-size: 6px;
+    border-radius: 2px;
+    background-color: #fff0f0;
+    color: #FFFFFF;
+    padding:0 3px;
+    margin: 0 2px;
+}
+.idel:before{
+    content: "del";
+}
+.idel:hover{
+    background-color: #923333;
 }
 </style>
 </head>
@@ -390,18 +426,18 @@ select{
     
     <div class="dtdl">
         <div class="dtr">
-            <span class="dspan" name="object_name">项目名称</span><span>[改]</span>
+            <span class="dspan" name="object_name">项目名称</span><span class="iedit" title="修改项目"></span><span class="idel" title="删除项目"></span>
             <div style="margin-top:1px;"></div>
             <span class="dspanExp" name="object_exp">项目介绍</span>
             <div style="margin-top:1px;"></div>
             <span class="dspanExp" name="object_host"></span>
-            <div style="margin-top:10px;"></div>
+            <div style="margin-top:20px;"></div>
             <span class="dspan">接口定义</span>
             <div id="ApiListTbody">
-                <span name="api_left_list" id="left_{api_id}" class="dspanName" onclick="api_select('{api_id}')" style="cursor: pointer;">{api_name}<span class="bg{api_type}"></span></span>
+                <span name="api_left_list" id="left_{api_id}" class="dspanName" onclick="api_select('{api_id}')" style="cursor: pointer;"><span class="bg{api_type}"></span>{api_name}&nbsp;&nbsp;<span class="iedit" title="修改接口" onclick="edit_api('{api_id}')"></span><span class="idel" title="删除接口" onclick="del_api('{api_id}')"></span></span>
             </div>
+            <div style="margin-top:10px;"></div>
             <span class="dspan">对象定义</span>
-            
         </div>
     </div>
     
@@ -412,7 +448,7 @@ select{
         
         <div id="ApiTabTbody">
             <div class="dtr" api_id="{api_id}">
-                <span class="dspan ApiName" >{api_name}<span class="bg{api_type}"></span></span>
+                <span class="dspan ApiName"><span class="bg{api_type}"></span>{api_name}&nbsp;&nbsp;<span class="iedit" title="修改接口" onclick="edit_api('{api_id}')"></span><span class="idel" title="删除接口" onclick="del_api('{api_id}')"></span></span>
                 <div style="height:5px;"></div>
                 <span class="dspan ApiURL">{api_url}</span>
                 <span class="dspan">{api_exp}</span>
@@ -586,6 +622,21 @@ function save_object(){
         }
     },"json");
 }
+
+function del_api(api_id){
+    ObjectId    = $("#object_id").val();
+    if( confirm('确认删除该接口么?') ){
+        $.get("api.php?act=del_api&oid="+ObjectId+"&api_id=".api_id,function(Json){
+            if( Json['status']!=true ){
+                alert(Json['error']);
+            }else{
+                $("#left_"+api_id).remove();
+                $("#ApiTabTbody div[api_id='"+api_id+"']").remove();
+            }
+        },'json');
+    }
+}
+
 function esc_object(){
     $("#object_id_new").empty();
     $("#mask_object").hide();
@@ -622,6 +673,7 @@ function resp_newtr(){
  * @param {type} ObjId
  * @returns {undefined}
  */
+ObjectSeleID    = false;
 function FunShowObjectList(ObjId){
     $.get("api.php?act=show_object",function(Json){
         if( Json['status']!=true ){
@@ -633,11 +685,9 @@ function FunShowObjectList(ObjId){
                 window.ObjectList   = Json.object;
             
             if( typeof ObjectList!="object" || ObjectList.length==0 ){
-            	
             	$("#but_addapi").hide();
                 $("#but_adddom").hide();
                 show_objecttab();
-                
             }else{
             	$("#but_addapi").show();
                 $("#but_adddom").show();
@@ -684,7 +734,6 @@ function FunShowObjectInfo(SeleID){
 
 
 function CallShowApiTr(ApiRow){
-//	var ApiRow          = ApiDom[i];
     var TPL 			= HTMLTPL['ApiListTbody'];
     
     //新增左侧接口列表
@@ -819,9 +868,14 @@ $(document).ready(function(){
     $("#ApiTabTbody").empty();
     FunShowObjectList();
     
-    setTimeout(function(){
-        if( typeof ObjectSeleID!="undefined" )FunShowApiAll(ObjectSeleID);
-    },1000);
+    window.TimeRe   = 0;
+    window.TimeDom  = setInterval(function(){
+        if( TimeRe>100 ){TimeRe=null;clearInterval(TimeDom);}
+        if( typeof ObjectSeleID!="undefined"&&ObjectSeleID!=false ){
+            FunShowApiAll(ObjectSeleID);
+            clearInterval(TimeDom);
+        }
+    },100);
     
 });
 </script>
