@@ -16,9 +16,11 @@ body {
     margin-bottom: 0px;
 }
 .dtrt {
+    height: 28px;
     font-size: 14px;
     background-color: #D0DBE3;
-    padding: 10px;
+    padding-top: 10px;
+    padding-bottom: 5px;
     position: fixed;
     width:100%;
 }
@@ -255,6 +257,27 @@ select{
 .idel:hover{
     background-color: #923333;
 }
+.ico_word{
+    height: 18px;
+    width: 18px;
+    display: inline-block;
+    cursor: pointer;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPGSURBVDhPlVNNiBxFFJ6D4EnwELxEvGS6q6p/ZmZXCSseohchB3MQsslBiDvTf9XdM7Oz2cVsFDdBNBgUssmCBkSIm53pn+numZ7J7I5jSNj4s8EQgp6y4lz8IYLgSVASLF/N7saoINjweFVfv/pevfe+yjz4Zcu9h/PV5NGJWmf33nLv8b3l6D9toubvfrKSPrFvJt21TZHJYCcal+3WnOLE8wUnro65TXdkNjd/y+9gO7jru+PlmMpW9O6IRDH8p7HpfyjZrbelav89QtMOtpJVibZ63Mv2pQGh7TWJJj2OcU/sVl+pDS6r5c7iGI3KGVT84BHJ9E5LNJhHRrROqp8w5K4y5FwaGXZg7fZ/xyOsu4W7gMNeqq3/huz0ZoH61Yxq+QdUM3pHMqPTkglkut9CdocJJY+JZosJun8bFS+UkR58imibCZrP+H+x2KhjzZ/BRrCmOOErGdUMT8hWeFKYatxAxfpTgh4c5pkFoznKip1kkZcvuWkNuz0mGjEnugexB3Cx8TzSG9dzbnwsI1vBa9gKjgla45fs1MpbgnaxINDWj6MSrBaT3eTQwsKVh/K0+ZyghXexu8agb0NpalnKFoOlrN4Y5p1oOiPb0XFiNOayevgzdrrpvpnzu4jTSaXaVSbq3neq7o0rer2IissIiL6Sj16DW7bDnPXRY6jSHxAzuV2w/EpGps1Xid6YFa3ke1JZHSrGChYNb0Ge/ZwRu3shVw7HsNO5pjqJit30jDz3GROK/nHpyMUCqQx+wLR96y8iszGbNaIh9OAPXKof2aND/eU1Jlf6JWLHk2T66k8Qd0iu9A5jXvLLKy+IJU/DlQEjVvxlwb5P5M/CNDZJ7QrDZrxYMJclaPrXSIe+lMIzpHqZwdSWUKnxLEz1pkLDHKHJknR0nSEz2vg7UcnbJNNwwEo3Rn0xgikV1C4awRekOmCi5m/k7aCgUP8l1fImeBzvIwL8X0QIxAe9+lUyvIN85KoV7xdp5w6XgUi7d1Qr3M9xovmTPA67fSBq/oNI8zZFGDcfL1z7FD+ANO+kaKV3uRCR3b3H9xyXaPwm4UqnnQeItscv6OE3Im1BaW2WNaOhWKyf530TzQTEGYLKwcOt92j190U9+pYnhefBsN68nrPDrRthw5sGHQ25okW9CZlSRiofw7tKQcnRfeMHSQXKAc/juNKxGcHUmhSIolOK2XxdNqMTsD4H720Rm+FZbIGZ/lm+3zFs+dt4OMJlmpxTaHM+R6M3Mnm3/YxsBrbqxgdzNHxR/h/G4xU7nJSMyPkTx3tH3o8BsRMAAAAASUVORK5CYII=");
+}
+.ico_excl{
+    height: 18px;
+    width: 18px;
+    display: inline-block;
+    cursor: pointer;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOXSURBVDhPrZJrTJtVGMebmMUEsy1jgHOwZR+MmzN+gdVlTmHTsY2XocSN4dIs1KFx2S26DYaNAo45jLooi5dK7RjwAbNuKb341hIvQLqBymWzGGMTDYJc27690QvU/h/PewphOD/6JCfPufyfX/7POUfxv8fnttd2uUYGVZLkVw25flA1iAdVP7u6VGNjY6rJyckleWRkRDU8PMznTqdz5zxCoWgxfvBktbiJjENVJEfzj0fo/e4n2CzO1/8VAHiempoiu92ew0GufnfRtf4zdPLLVST2fUzlLffR4F8mpiaKRqM0MzNDsViMZ3kdCAQoFArR3NwcSZJEoiju5qCezgHBF/Ci1pqNMr0CesdLSCQSiEVjiEQiYEVLcjAYhN/vBwOCtQuz2fxsEuQYECTJhxrTFqibFdB1lidBsXtBzBEHMSfwer0YHx9fBP3imBaudp1CxY11+Nr5IdRNCgz8YeWwuwF3O1oATUxMLIJOXcoVZCemwfO8uE7cimOtqzDp+ZO7+jdIbkkGeTwe7shoNCZBNbpDgqFPwwpHMRubhWu8F003j+HO79/dAwqHw/x+ZIjb7Qb7AougDrFTCElxeD0+TE9PIxyaRSKeQDQyywBL70aey25kiKwdHR2FwWBIgiwWiyCT2Z/gryD37vP5eAuyAxmw4GTBzYKWfU60tbUlQaKlQ/C5gwhKTOwJI+xnToJxxEIJxCPs9eZzJBBHNPQ3Qr4YAt4wH+4JCUbD/GVXXFQLbfZPcON7HUwOPcy9Olj7GmG7/QU6nFfxzVALbHd0sA3qYfmpEaZbjWjv1uP6tzq0Wi/j9DtlSVDO4RRhZ8VKFL6dhhcupeFk6xZUXd+BWrEAGts2nBNzUG/fj2prPiqv5eFEsxLF76WioGY18l5fAaXqgSQot3yNsLcyE4WaLBRfyMRRrRL9v3ajqfMt6LrO4oLlANp7tagzluL2bz04rt2OotqHUFCVhT0Va/HUkYwkKO/lB/exTdp9JpN2nU2now07yNxzhT4VK8ngaCBN63PUfrORtF9pyHxLT8cv59Mzp1cz/Vraey6Tcssz8jlIeTAtd9+b66j4/Hoqqs6iF+sfpZJ3N1BZw2P0qlZJJ3Tb6ZXPsunwR5vpQP0GKr24ieuK69ZT4RtZyN6fupWDWGQ88vSKUmVJujr7+VT148JyPjYLKeqNwjKW71dv3LOM7aUkz4qWc52sf3jbyhKFQpH+D8aDRMi4uFkeAAAAAElFTkSuQmCC");
+}
+.ico_html{
+    height: 18px;
+    width: 18px;
+    display: inline-block;
+    cursor: pointer;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQMSURBVDhPVZRvbBN1GMfvhYkxUV9oeIMD5nZ37brJGA5wKNkU2dq117JlZWV/BDZFJn8X1GxKNEbRaXS8QDEQ3qAv9AUBXkCQyEQHo9vUwVjXbtMxer3rUUbX9nbr6Lrt69P2iOFJvmna3u+T5/k+398xYrnpmYDAJhW7AVJKDiPkqjzI1fmQa15AcMtKBF2FCNaSnPS9poD+M9EzRigOA8KbjXTGIDBjZvZpUeDuhew8ZPoxWJMPpW41Qk0luNdShvv7y6EdtmHmcwu0jzdiuu0VTLeugbp3FWI78iFaufk7Av8aI76U9UTAyg9PEl0S+IxsHCQrm5ZszUWkkYPazCHWxCPWTHrTiNjOPKiNeQjYuKmg3VDMoLT0sYCN/yNsfR7+xpcxePEchrp+ge/KJYx1X8Z4z2944B/BgjL+v4L/YuZIM9SaZQhY2QmyxMCkiro4HbHlwN+wHn92/w73LQ/cwyPoGRmHe3Qcs3i0FrUItENmTDuzIVWyg6NW7rk0yG/jT8TsLMQtL2Lg3M/oHbgJz9FPMHbQhbH36xE7ug/xE62IH89I+6oRsbfyMOMyIlDJXp20G55KgyQbf1h1cAhUF+DWD8fgHvTAd/xLKK5i3K1fi+jeEjK4BKqu2O6itFdxl4n85M+nIami9R/QNmeMHv7uszTopmcYHq8X3pFRJOaS+lCZSnT9iGjdUszWktkW/icdQyAr98Y05SJoXgFfx8E0qLevD9dJ7v5+xB8kdESmEmePIFafBc2ZGo07pmMYRhZ4RyqQipAZT6SRUhuc2FEGPynaRsa2b0JyuCcNmj31IYGWI1xtgN+a+6mOYRjFkVvmF1gtRJnxN5RgrH07RGcRgpuyqMvliLiyKHy5SHqupUHxb1sIlI0gZS9gYffrGDLbzBaRaVK4Yhn+oU25PT4MneyEbKaHU6DapVAPrMO86MPifBJah4tAOZAFNiFa2DodwzAhwcQGBN47lcoSjfTXrxfR+/cNeL/+ALffsSL2URUSF74HFhawODeL6UMVUOtzKdWsKlbyZh3DMGoNu0S28u6IgzZHXnm/aUf/tau4PuSlTN1APDmfHgnJBOb6zkPdU0QgDqLATvotOcU6hkld3Mepo0sqXViZLm8KdntnObwd72LgwhlowTuYu3wKM53boVKG1F0maE2FFBeDNFGxIlvHZCoVLLgKcJ9eGaH61bjrNCFIkQhsXYNIaykBViL2tgnRfeugtpBfDYXpjnwPU/2wJIFtiVYZuunGy2HqLN5MKd7zKqZ2bUC0dQO0917H7O4yqFtXUSdcOGRn++mzUz/+aF0pXfKkUmUskGysoFTmtEmOvDPKtrWSsm19WK4u6JIqsr+gDTv9FkOxtNH4rH6MimH+A/Zb87DPwEPVAAAAAElFTkSuQmCC");
+}
 </style>
 </head>
 <body>
@@ -264,7 +287,6 @@ select{
                 <span class="dspan">项目管理</span>
                 <span class="dspan" style="float:right;" onclick="$(this).parent().parent().hide();$(this).parent().parent().parent().hide()"><span class="dbut">X</span></span>
             </div>
-            
             <table width="100%">
                 <tr>
                     <td width="30%">项目名称<input name="object_id_new" type="hidden" value="" /></td>
@@ -338,9 +360,9 @@ select{
         </div>
         
         <div id="mask_api" class="mk" style="width:60%;display: none;">
-            <input name="new_apiid" value="" type="hidden"/>
+            <input name="new_api_id" value="" type="hidden"/>
             <div class="dtr">
-                <span class="dspan">对象管理</span>
+                <span class="dspan">接口管理</span>
                 <span class="dspan" style="float:right;" onclick="$(this).parent().parent().hide();$(this).parent().parent().parent().hide()"><span class="dbut">X</span></span>
             </div>
             <div class="ApiName">添加/修改接口</div>
@@ -411,12 +433,18 @@ select{
     </div>
     
     <div class="dtrt">
-        <span class="dspan">项目列表</span>
+        <span class="dspan">&nbsp;&nbsp;&nbsp;项目列表 >></span>
         <span class="dspan">
-          <select id="object_id" onchange="sele_objtab()">
+            <select id="object_id" onchange="sele_objtab()">
               <option value="">默认项目</option>
-          </select>
+            </select>
+            <div class="ico_word" title="导出为WORD" onclick="export_file('word')"></div>
+            <div class="ico_excl" title="导出为EXCL" onclick="export_file('excl')"></div>
+            <div class="ico_html" title="导出为HTML" onclick="export_file('html')"></div>
         </span>
+        
+        <span class="dspan" style="margin-left: 20%;" id="version_tab">Api 在线编辑工具 V2.0</span>
+        
         <span class="dspan" style="float:right">
             <span id="but_addapi" class="dbut" onclick="show_apitab()">+创建接口</span>
             <span id="but_adddom" class="dbut" onclick="show_domtab()">+创建对象</span>
@@ -426,7 +454,7 @@ select{
     
     <div class="dtdl">
         <div class="dtr">
-            <span class="dspan" name="object_name">项目名称</span><span class="iedit" title="修改项目"></span><span class="idel" title="删除项目"></span>
+            <span class="dspan" name="object_name">项目名称</span><span class="iedit" title="修改项目" onclick="edit_object()"></span><span class="idel" title="删除项目" onclick="del_object()"></span>
             <div style="margin-top:1px;"></div>
             <span class="dspanExp" name="object_exp">项目介绍</span>
             <div style="margin-top:1px;"></div>
@@ -511,28 +539,56 @@ select{
         </div>
     </div>
 <script language="javascript">
+function export_file(Type){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
+    window.location = "api.php?act=export&oid="+ObjectSeleID+"&type="+Type;
+}
 function sele_objtab(){
+    
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
+    
 	SeleID	= $("#object_id").val();
 	
 	if( SeleID!=undefined ){
+	    ObjectSeleID   = SeleID;
+	    window.localStorage.setItem("ObjectSeleID",SeleID);
 		FunShowObjectInfo(SeleID);
 		FunShowApiAll(SeleID);
 	}
 }
 function show_apitab(){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
     $("#mask_api").empty();
     $("#mask_api").append( HTMLTPL['MaskApi'] );
     $("#HeadTbody").empty();
     $('#mask').show();
     $('#mask_api').show();
+    $("input[name='new_api_id']").val("");
 }
-
 function show_objecttab(){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
 	$('#mask').show();
 	$('#mask_object').show();
+	
+	$("input[name='object_id_new']").val("");
+    $("input[name='object_name_new']").val("");
+    $("input[name='object_host_new']").val("");
+    $("textarea[name='object_exp_new']").val("");
+    $("#ObjHeadTbody").empty();
 }
 
 function show_domtab(){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
 	$('#mask').show();
 	$('#mask_event').show();
 }
@@ -548,6 +604,7 @@ function save_api_esc(){
 function save_api(cont){
     var PostData    = {
         'object_id'     : $("#object_id").val(),
+        'api_id'        : $("input[name='new_api_id']").val(),
         'api_name'      : $("input[name='new_apiname']").val(),
         'api_url'       : $("input[name='new_apiurl']").val(),
         'api_type'      : $("select[name='new_apitype']").val(),
@@ -600,7 +657,7 @@ function save_api(cont){
 
 function save_object(){
     var PostData    = {
-        'object_id'        : $("#object_id_new").val(),
+        'object_id'        : $("input[name='object_id_new']").val(),
         'object_name'      : $("input[name='object_name_new']").val(),
         'object_exp'       : $("textarea[name='object_exp_new']").val(),
         'object_host'      : $("input[name='object_host_new']").val(),
@@ -623,7 +680,113 @@ function save_object(){
     },"json");
 }
 
+/**
+ * 修改项目显示界面
+ */
+function edit_object(){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
+    object_id   = ObjectSeleID;
+    if( typeof object_id=="undefined" )return;
+    if( ObjectList==undefined||ObjectList==null||ObjectSeleID==false||ObjectSeleID==undefined )return;
+    
+    var Row = ObjectList[object_id];
+    show_objecttab();
+    
+    $("input[name='object_id_new']").val(object_id);
+    $("input[name='object_name_new']").val(Row['object_name']);
+    $("input[name='object_host_new']").val(Row['object_host']);
+    $("textarea[name='object_exp_new']").val(Row['object_exp']);
+    $("#ObjHeadTbody").empty();
+    
+    if( Row['object_header'].length==undefined ){
+        objhead_newtr(Row['object_header']);
+    }
+}
+
+function del_object(){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
+    object_id   = ObjectSeleID;
+    
+    if( typeof object_id=="undefined" )return;
+    
+    if( confirm('确认删除该项目么?如果删除项目，该项目下的所有接口将被删除!') ){
+        $.get("api.php?act=del_object&oid="+object_id,function(Json){
+            if( Json['status']!=true ){
+                alert(Json['error']);
+            }else{
+                FunShowObjectList();
+                FunShowObjectInfo();
+            }
+        },'json');
+    }
+}
+
+
+/**
+ * 显示修改接口界面
+ * @param {Object} api_id
+ */
+function edit_api(api_id){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
+    
+    if( typeof api_id=="undefined" )return;
+    
+    ObjectId    = $("#object_id").val();
+    
+    $.get("api.php?act=show_api&oid="+ObjectId+"&api_id="+api_id,function(Json){
+        
+        if( Json['status']!=true ){
+            alert(Json['error']);
+            return;
+        }
+        
+        show_apitab();
+        $("input[name='new_api_id']").val(api_id);
+        
+        Row = Json['ApiInfo'];
+        
+        $("input[name='new_apiname']").val( Row['api_name']);
+        $("input[name='new_apiurl']").val( Row['api_url']);
+        $("textarea[name='new_apiexp']").text( Row['api_exp']);
+        $("select[name='new_apitype']").val( Row['api_type'].toUpperCase() );
+        
+        $("#HeadTbody").empty();
+        $("#RequTbody").empty();
+        $("#RespTbody").empty();
+        
+        
+        if( Json['ApiInfo']['api_header']!=undefined && Json['ApiInfo']['api_header'].length>0 ){
+            Row = Json['ApiInfo']['api_header'];
+            for(i=0;i<Row.length;i++){
+                head_newtr(Row[i]);
+            }
+        }
+        if( Json['ApiInfo']['api_request']!=undefined && Json['ApiInfo']['api_request'].length>0 ){
+            Row = Json['ApiInfo']['api_request'];
+            for(i=0;i<Row.length;i++){
+                requ_newtr(Row[i]);
+            }
+        }
+        if( Json['ApiInfo']['api_response']!=undefined && Json['ApiInfo']['api_response'].length>0 ){
+            Row = Json['ApiInfo']['api_response'];
+            for(i=0;i<Row.length;i++){
+                resp_newtr(Row[i]);
+            }
+        }
+        
+    },"json");
+}
+
 function del_api(api_id){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
     ObjectId    = $("#object_id").val();
     if( confirm('确认删除该接口么?') ){
         $.get("api.php?act=del_api&oid="+ObjectId+"&api_id=".api_id,function(Json){
@@ -648,23 +811,78 @@ function api_select(api_id){
 	$("#left_"+api_id).attr("class",'dspanName dspanNames');
 	$("html,body").animate({scrollTop:$("div[api_id='"+api_id+"']").offset().top},500);
 }
-function objhead_newtr(){
-    if( $("input[name='object_header_name']").length>5 ){
-        return;
+
+/**
+ * 增加一行项目头部参数
+ * @param {Object} Row
+ */
+function objhead_newtr(Row){
+    if( $("input[name='object_header_name']").length>5 ){return;}
+    
+    var TPL     = HTMLTPL['ObjHeadTbody'];
+    
+    if( typeof Row=="object"&&Row.length==undefined ){
+        TPL     = $(HTMLTPL['ObjHeadTbody']);
+        
+        for(var i in Row){
+            if( i!=undefined ) TPL.find("input[name='object_header_name_new']").val(i);
+            if( Row[i]!=undefined ) TPL.find("input[name='object_header_value_new']").val(Row[i]);
+        }
     }
-    $("#ObjHeadTbody").append( HTMLTPL['ObjHeadTbody'] );
+    $("#ObjHeadTbody").append( TPL );
 }
 function eve_newtr(){
     $("#EveTbody").append( HTMLTPL['EveTbody'] );
 }
-function head_newtr(){
-    $("#HeadTbody").append( HTMLTPL['HeadTbody'] );
+
+/**
+ * 增加一个接口头部行信息
+ * @param {Object} Row
+ */
+function head_newtr(Row){
+    var TPL     = HTMLTPL['HeadTbody'];
+    if( Row!=undefined&&typeof Row['name']!="undefined" ){
+        TPL     = $(HTMLTPL['HeadTbody']);
+        if( Row['name']!=undefined ) TPL.find("input[name='new_apiheader_name']").val(Row["name"]);
+        if( Row['value']!=undefined ) TPL.find("input[name='new_apiheader_value']").val(Row["value"]);
+        if( Row['exp']!=undefined ) TPL.find("input[name='new_apiheader_exp']").val(Row["exp"]);
+        if( Row['name']!=undefined && Row["empty"]=='true'||Row["empty"]==true ){
+            TPL.find("input[name='new_apiheader_empty']").attr("checked",true);
+        }else{
+            TPL.find("input[name='new_apiheader_empty']").attr("checked",false);
+        }
+    }
+    $("#HeadTbody").append( TPL );
 }
-function requ_newtr(){
-    $("#RequTbody").append( HTMLTPL['RequTbody'] );
+function requ_newtr(Row){
+    var TPL     = HTMLTPL['RequTbody'];
+    if( Row!=undefined&&typeof Row['name']!="undefined" ){
+        TPL     = $(HTMLTPL['RequTbody']);
+        if( Row['name']!=undefined ) TPL.find("input[name='new_apiheader_name']").val(Row["name"]);
+        if( Row['value']!=undefined ) TPL.find("input[name='new_apiheader_value']").val(Row["value"]);
+        if( Row['exp']!=undefined ) TPL.find("input[name='new_apiheader_exp']").val(Row["exp"]);
+        if( Row['name']!=undefined && Row["empty"]=='true'||Row["empty"]==true ){
+            TPL.find("input[name='new_apiheader_empty']").attr("checked",true);
+        }else{
+            TPL.find("input[name='new_apiheader_empty']").attr("checked",false);
+        }
+    }
+    $("#RequTbody").append( TPL );
 }
-function resp_newtr(){
-    $("#RespTbody").append( HTMLTPL['RespTbody'] );
+function resp_newtr(Row){
+    var TPL     = HTMLTPL['RequTbody'];
+    if( Row!=undefined&&typeof Row['name']!="undefined" ){
+        TPL     = $(HTMLTPL['RequTbody']);
+        if( Row['name']!=undefined ) TPL.find("input[name='new_apiheader_name']").val(Row["name"]);
+        if( Row['value']!=undefined ) TPL.find("input[name='new_apiheader_value']").val(Row["value"]);
+        if( Row['exp']!=undefined ) TPL.find("input[name='new_apiheader_exp']").val(Row["exp"]);
+        if( Row['name']!=undefined && Row["empty"]=='true'||Row["empty"]==true ){
+            TPL.find("input[name='new_apiheader_empty']").attr("checked",true);
+        }else{
+            TPL.find("input[name='new_apiheader_empty']").attr("checked",false);
+        }
+    }
+    $("#RespTbody").append( TPL );
 }
 
 
@@ -675,41 +893,51 @@ function resp_newtr(){
  */
 ObjectSeleID    = false;
 function FunShowObjectList(ObjId){
-    $.get("api.php?act=show_object",function(Json){
-        if( Json['status']!=true ){
-            alert('获取失败');
+    
+    seccuss = function(Json){
+        $("#object_id").empty();
+        var Option              = "";
+        var SeleID              = null;
+            window.ObjectList   = Json;
+        
+        if( typeof ObjectList!="object" || ObjectList.length==0 ){
+            $("#but_addapi").hide();
+            $("#but_adddom").hide();
+            show_objecttab();
         }else{
-            $("#object_id").empty();
-            var Option              = "";
-            var SeleID              = null;
-                window.ObjectList   = Json.object;
+            $("#but_addapi").show();
+            $("#but_adddom").show();
             
-            if( typeof ObjectList!="object" || ObjectList.length==0 ){
-            	$("#but_addapi").hide();
-                $("#but_adddom").hide();
-                show_objecttab();
-            }else{
-            	$("#but_addapi").show();
-                $("#but_adddom").show();
-            	
-                for(var i in ObjectList){
-                    Option += "<option value='"+i+"'>"+ObjectList[i]["object_name"]+"</option>";
-                    if( SeleID==null || ObjId==i ) SeleID = i;
+            for(var i in ObjectList){
+                Option += "<option value='"+i+"'>"+ObjectList[i]["object_name"]+"</option>";
+                if( SeleID==null || ObjId==i ){
+                    SeleID = i;
                 }
-                $("#object_id").html( Option );
-                $("#object_id option[value='"+SeleID+"']").attr("selected",true);
-
-                if( SeleID!=null ){
-                    FunShowObjectInfo(SeleID);
-                    window.ObjectSeleID = SeleID;
-                }
-                
-                $("#but_addapi").show();
-                $("#but_adddom").show();
-                
             }
+            $("#object_id").html( Option );
+            $("#object_id option[value='"+SeleID+"']").attr("selected",true);
+
+            if( SeleID!=null ){
+                FunShowObjectInfo(SeleID);
+                window.ObjectSeleID = SeleID;
+            }
+            
+            $("#but_addapi").show();
+            $("#but_adddom").show();
         }
-    },'json');
+    }
+    
+    if( !ExistsLine() ){
+        seccuss(LocalObject);
+    }else{
+        $.get("api.php?act=show_object",function(Json){
+            if( Json['status']!=true ){
+                alert('获取失败');
+            }else{
+                seccuss(Json.object);
+            }
+        },'json');
+    }
 }
 
 /**
@@ -732,7 +960,10 @@ function FunShowObjectInfo(SeleID){
     }
 }
 
-
+/**
+ * 显示一个接口列表
+ * @param {Object} ApiRow
+ */
 function CallShowApiTr(ApiRow){
     var TPL 			= HTMLTPL['ApiListTbody'];
     
@@ -829,23 +1060,45 @@ function FunShowApiAll(ObjectId){
     $("#ApiListTbody").empty();
     $("#ApiTabTbody").empty();
     
-    $.get("api.php?act=show_api&oid="+ObjectId,function(Json){
-        if( Json['status']!=true ){
-            alert(Json['error']);
-        }else{
-            var ApiDom  = Json['data'];
-            for(var i in ApiDom){
-                CallShowApiTr(ApiDom[i]);
-            }
+    seccuss = function(Json){
+        var ApiDom  = Json;
+        for(var i in ApiDom){
+            CallShowApiTr(ApiDom[i]);
         }
-    },'json');
+    }
+    
+    if( !ExistsLine() ){
+        seccuss(LocalApiRow);
+    }else{
+        $.get("api.php?act=show_api&oid="+ObjectId,function(Json){
+            if( Json['status']!=true ){
+                alert(Json['error']);
+            }else{
+                seccuss(Json['data']);
+            }
+        },'json');
+    }
+}
+
+
+/**
+ * 是否允许在线操作
+ */
+var LocalObject = null;
+var LocalApiRow = null;
+
+function ExistsLine(){
+    if( LocalObject!=null||LocalApiRow!=null ){
+        return false;
+    }else{
+        return true;
+    }
 }
 
 $(document).ready(function(){
 	$("#but_addapi").hide();
     $("#but_adddom").hide();
-                
-                
+    
     window.HTMLTPL  = [];
     
     //开始获取要显示的模板
@@ -866,7 +1119,11 @@ $(document).ready(function(){
     
     $("#ApiListTbody").empty();
     $("#ApiTabTbody").empty();
-    FunShowObjectList();
+    
+    if( !ExistsLine() ){$("#version_tab").html( $("#version_tab").text()+" -- 离线版,<a href='https://github.com/crabco/phptools'>访问在线版本</a>" );}
+    
+    var SeleID  = window.localStorage.getItem("ObjectSeleID");
+    FunShowObjectList(SeleID);
     
     window.TimeRe   = 0;
     window.TimeDom  = setInterval(function(){

@@ -19,7 +19,7 @@ function run(){
      */
     if( $Act=='save_object' ){
         $PostData       = $_POST['data'];
-        $ObjectID       = ( !empty($ObjectID) )? $PostData['object_id'] : NewRandId();
+        $ObjectID       = ( !empty($PostData['object_id']) )? $PostData['object_id'] : NewRandId();
         
         if( !ExistsRandId($ObjectID) ){
             return ['status'=>false,'error'=>'项目序号非法'];
@@ -35,14 +35,12 @@ function run(){
             'object_host'  => $PostData['object_host'],
             'object_header' => [],
         ];
-        
         if( !empty($PostData['object_header']) ){
             foreach($PostData['object_header'] as $vs){
                 if( empty($vs['name'])||!ExistsKeyName($vs['name']) )continue;
                 $ObjectInfo["object_header"][$vs['name']]   = $vs['value'];
             }
         }
-        
         if( !set_object($ObjectID, $ObjectInfo) ){
             $Run        = ['status'=>false,'error'=>'存储失败'];
         }else{
@@ -50,6 +48,25 @@ function run(){
         }
     }
     
+    
+    /**
+     * 移除项目
+     */
+    if( $Act=='del_object' ){
+        $ObjectID       = ( !empty($_GET['oid']) )? $_GET['oid'] : "";
+        if( empty($ObjectID) || !ExistsRandId($ObjectID) ){
+            return ['status'=>false,'error'=>'项目非法'];
+        }
+        $ObjectList     = get_object();
+        if( !isset($ObjectList[$ObjectID]) ){
+            return ['status'=>false,'error'=>'项目非法'];
+        }
+        
+        set_object($ObjectID,null,true);
+        rm_json($ObjectID);
+        
+        $Run['status']  = true;
+    }
     
     
     
@@ -60,9 +77,28 @@ function run(){
     if( $Act=="show_api" ){
         $ObjectID       = ( !empty($_GET['oid']) )? $_GET['oid'] : "";
         if( empty($ObjectID) || !ExistsRandId($ObjectID) ){
-            return ['status'=>false,'error'=>'项目非法'];;
+            return ['status'=>false,'error'=>'项目非法'];
         }
-        return ['status'=>true,'error'=>'','data'=>get_json($ObjectID)];
+        $ApiID          = trim($_GET['api_id']);
+        if( !empty($ApiID)&&!ExistsRandId($ApiID) ){
+            return ['status'=>false,'error'=>'接口序号非法'];
+        }
+        
+        $ApiAll         = get_json($ObjectID);
+        
+        if( empty($ApiID) ){
+            $Run['status']  = true;
+            $Run['error']   = "";
+            $Run['data']    = $ApiAll;
+        }else{
+            if( !isset($ApiAll[$ApiID]) ){
+                return ['status'=>false,'error'=>'不存在的接口'];
+            }
+            
+            $Run['status']  = true;
+            $Run['error']   = '';
+            $Run['ApiInfo'] = $ApiAll[$ApiID];
+        }
     }
     
     
@@ -135,7 +171,56 @@ function run(){
      * 删除接口
      */
     if( $Act=="del_api" ){
+        $ObjectID       = ( !empty($_GET['oid']) )? $_GET['oid'] : "";
+        if( empty($ObjectID) || !ExistsRandId($ObjectID) ){
+            return ['status'=>false,'error'=>'项目非法'];
+        }
+        $ApiID          = trim($_GET['api_id']);
+        if( !empty($ApiID)&&!ExistsRandId($ApiID) ){
+            return ['status'=>false,'error'=>'接口序号非法'];
+        }
+        
+        $ApiAll         = get_json($ObjectID);
+        
+        if( empty($ApiAll) ){
+            return ['status'=>false,'error'=>'项目不存在'];
+        }
+        
+        if( !isset($ApiAll[$ApiID]) ){
+            return ['status'=>false,'error'=>'接口不存在'];
+        }
+        
+        unset($ApiAll[$ApiID]);
+        set_json($ObjectID, $ApiAll);
+        
         $Run['status']  = true;
+        
+    }
+    
+    //导出文件
+    if( $Act=="export" ){
+        
+        $ObjectID       = ( !empty($_GET['oid']) )? $_GET['oid'] : "";
+        if( empty($ObjectID) || !ExistsRandId($ObjectID) ){
+            return ['status'=>false,'error'=>'项目非法'];
+        }
+        
+        //导出为网页
+        $HTML                      = file_get_contents("index.html");
+        
+        $ObjectAll                 = get_object();
+        $Object[$ObjectID]         = $ObjectAll[$ObjectID];
+        $ApiAll                    = get_json($ObjectID);
+        
+        $FileName                  = $Object[$ObjectID]['object_name']."-".date("Y年m月d日")."版本";
+        $HTML                      = preg_replace('/LocalObject[ ]+\=[ ]+null;/i', "LocalObject = " . json_encode($Object), $HTML);
+        $HTML                      = preg_replace('/LocalApiRow[ ]+\=[ ]+null;/i', "LocalApiRow = " . json_encode($ApiAll), $HTML);
+        $HTML                      = preg_replace('/\<title\>[^<]+/i', "<title>{$FileName}", $HTML);
+        
+        header('Content-Type:text/html');
+        header('Content-Disposition: attachment; filename="'.$FileName.'.html"');
+        echo $HTML;
+        exit;
     }
     
     return $Run;
@@ -180,7 +265,7 @@ function set_json($Name,$Data){
     return $Save;
 }
 //移除指定数据
-function rm_json(){
+function rm_json($Name){
     $Name   .= ".json";
     $Rm     = ( is_file($Name) )? unlink($Name) : true;
     return $Rm;
