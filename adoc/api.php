@@ -93,7 +93,7 @@ function run(){
         
         if( !empty($PostData['api_header']) ){
             foreach($PostData['api_header'] as $vs){
-                if( empty($vs['name'])||!ExistsKeyName($vs['name']) ){continue;}
+                if( empty($vs['name']) || !ExistsKeyName($vs['name']) ){continue;}
                 $ApiInfo["api_header"][]   = ['name'=>$vs['name'],'value'=>$vs['value'],'exp'=>$vs['exp'],'empty'=>$vs['empty']];
             }
         }
@@ -121,9 +121,12 @@ function run(){
         
         
         if( !set_json($ObjectID, $ObjectApiDom) ){
-            $Run        = ['status'=>false,'error'=>'存储失败'];
+            $Run['status']          = false;
+            $Run['error']           = '存储失败';
         }else{
-            $Run        = ['status'=>true,'error'=>'','date'=>$ApiInfo];
+            $Run['status']          = true;
+            $Run['error']           = '';
+            $Run['ApiInfo']         = $ApiInfo;
         }
     }
     
@@ -189,7 +192,7 @@ function ExistsRandId($Id){
     return preg_match('/^[0-9]{1,1}[a-z0-9]{19,19}$/i', $Id);
 }
 function ExistsKeyName($Name){
-    return preg_match('/^[a-z0-9_-]{2,50}$/i', $Name);
+    return preg_match('/^[a-z0-9_-]{1,50}$/i', $Name);
 }
 
 /**

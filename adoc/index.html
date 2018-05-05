@@ -36,9 +36,10 @@ body {
     float: left;
     text-align: left;
     line-height: 25px;
+    position: fixed;
 }
 .dtd{
-    margin: 42px 0 0 10px;
+    margin: 42px 0 0 25%;
     width: 60%;
     min-height: 500px;
     float: left;
@@ -53,6 +54,10 @@ body {
     font-size: 12px;
     margin-left: 10px;
     display: inherit;
+}
+.dspanNames{
+	color:#B3318B;
+	font-weight: bold;
 }
 .dspanExp {
     color: #a2a2a2;
@@ -125,10 +130,21 @@ body {
 input{
     min-width: 100px;
     width: 90%;
+    padding:5px;
+    border-radius: 3px;
+    border: #5fca3a 1px solid;
 }
 textarea{
     min-width: 240px;
     min-height: 200px;
+    padding:5px;
+    border-radius: 3px;
+    border: #5fca3a 1px solid;
+}
+select{
+	padding:2px;
+	border-radius: 3px;
+    border: #5fca3a 1px solid;
 }
 .bgput:before{
     content:"PUT";
@@ -361,28 +377,31 @@ textarea{
     <div class="dtrt">
         <span class="dspan">项目列表</span>
         <span class="dspan">
-          <select id="object_id">
+          <select id="object_id" onchange="sele_objtab()">
               <option value="">默认项目</option>
           </select>
         </span>
         <span class="dspan" style="float:right">
-          <span class="dbut" onclick="$('#mask').show();$('#mask_object').show();">+创建项目</span>
-          <span class="dbut" onclick="$('#mask').show();$('#mask_event').show();">+创建对象</span>
-          <span class="dbut" onclick="show_apitab()">+创建接口</span>
+            <span id="but_addapi" class="dbut" onclick="show_apitab()">+创建接口</span>
+            <span id="but_adddom" class="dbut" onclick="show_domtab()">+创建对象</span>
+            <span id="but_addobject" class="dbut" onclick="show_objecttab()">+创建项目</span>
         </span>
     </div>
     
     <div class="dtdl">
         <div class="dtr">
-            <span class="dspan" name="object_name">项目名称</span>
+            <span class="dspan" name="object_name">项目名称</span><span>[改]</span>
             <div style="margin-top:1px;"></div>
             <span class="dspanExp" name="object_exp">项目介绍</span>
             <div style="margin-top:1px;"></div>
             <span class="dspanExp" name="object_host"></span>
             <div style="margin-top:10px;"></div>
+            <span class="dspan">接口定义</span>
             <div id="ApiListTbody">
-                <span class="dspanName" onclick="api_select('{api_id}')">接口名称<span class="bgget"></span></span>
+                <span name="api_left_list" id="left_{api_id}" class="dspanName" onclick="api_select('{api_id}')" style="cursor: pointer;">{api_name}<span class="bg{api_type}"></span></span>
             </div>
+            <span class="dspan">对象定义</span>
+            
         </div>
     </div>
     
@@ -395,7 +414,7 @@ textarea{
             <div class="dtr" api_id="{api_id}">
                 <span class="dspan ApiName" >{api_name}<span class="bg{api_type}"></span></span>
                 <div style="height:5px;"></div>
-                <span class="dspan ApiURL">{api_host}</span>
+                <span class="dspan ApiURL">{api_url}</span>
                 <span class="dspan">{api_exp}</span>
                 <div style="height:20px;"></div>
                 
@@ -456,6 +475,14 @@ textarea{
         </div>
     </div>
 <script language="javascript">
+function sele_objtab(){
+	SeleID	= $("#object_id").val();
+	
+	if( SeleID!=undefined ){
+		FunShowObjectInfo(SeleID);
+		FunShowApiAll(SeleID);
+	}
+}
 function show_apitab(){
     $("#mask_api").empty();
     $("#mask_api").append( HTMLTPL['MaskApi'] );
@@ -464,16 +491,29 @@ function show_apitab(){
     $('#mask_api').show();
 }
 
+function show_objecttab(){
+	$('#mask').show();
+	$('#mask_object').show();
+}
+
+function show_domtab(){
+	$('#mask').show();
+	$('#mask_event').show();
+}
+
+
 function save_api_esc(){
     $("#mask").hide();
     $("#mask_api").hide();
 }
 
+
+
 function save_api(cont){
     var PostData    = {
         'object_id'     : $("#object_id").val(),
         'api_name'      : $("input[name='new_apiname']").val(),
-        'api_url'       : $("input[name='new_apiname']").val(),
+        'api_url'       : $("input[name='new_apiurl']").val(),
         'api_type'      : $("select[name='new_apitype']").val(),
         'api_exp'       : $("textarea[name='new_apiexp']").val(),
         'api_header'    : [],
@@ -513,7 +553,7 @@ function save_api(cont){
             if( cont!=true ){
                 save_api_esc();
             }
-            FunShowApiAll(PostData['object_id']);
+            CallShowApiTr(Run['ApiInfo']);
         }else{
             alert(Run.error);
             return ;
@@ -552,7 +592,11 @@ function esc_object(){
     $("#mask").hide();
 }
 
-
+function api_select(api_id){
+    $("span[name='api_left_list']").attr("class","dspanName");
+	$("#left_"+api_id).attr("class",'dspanName dspanNames');
+	$("html,body").animate({scrollTop:$("div[api_id='"+api_id+"']").offset().top},500);
+}
 function objhead_newtr(){
     if( $("input[name='object_header_name']").length>5 ){
         return;
@@ -588,16 +632,31 @@ function FunShowObjectList(ObjId){
             var SeleID              = null;
                 window.ObjectList   = Json.object;
             
-            for(var i in ObjectList){
-                Option += "<option value='"+i+"'>"+ObjectList[i]["object_name"]+"</option>";
-                if( SeleID==null || ObjId==i ) SeleID = i;
-            }
-            $("#object_id").html( Option );
-            $("#object_id option[value='"+SeleID+"']").attr("selected",true);
-            
-            if( SeleID!=null ){
-                FunShowObjectInfo(SeleID);
-                window.ObjectSeleID = SeleID;
+            if( typeof ObjectList!="object" || ObjectList.length==0 ){
+            	
+            	$("#but_addapi").hide();
+                $("#but_adddom").hide();
+                show_objecttab();
+                
+            }else{
+            	$("#but_addapi").show();
+                $("#but_adddom").show();
+            	
+                for(var i in ObjectList){
+                    Option += "<option value='"+i+"'>"+ObjectList[i]["object_name"]+"</option>";
+                    if( SeleID==null || ObjId==i ) SeleID = i;
+                }
+                $("#object_id").html( Option );
+                $("#object_id option[value='"+SeleID+"']").attr("selected",true);
+
+                if( SeleID!=null ){
+                    FunShowObjectInfo(SeleID);
+                    window.ObjectSeleID = SeleID;
+                }
+                
+                $("#but_addapi").show();
+                $("#but_adddom").show();
+                
             }
         }
     },'json');
@@ -623,6 +682,93 @@ function FunShowObjectInfo(SeleID){
     }
 }
 
+
+function CallShowApiTr(ApiRow){
+//	var ApiRow          = ApiDom[i];
+    var TPL 			= HTMLTPL['ApiListTbody'];
+    
+    //新增左侧接口列表
+    TPL = TPL.replace(/{api_name}/g,ApiRow['api_name']);
+    TPL = TPL.replace(/{api_type}/g,ApiRow['api_type']);
+    TPL = TPL.replace(/{api_id}/g,  ApiRow['api_id']);
+    $("#ApiListTbody").append(TPL);
+    
+    //新增右侧接口列表
+    var TPL = HTMLTPL['ApiTabTbody'];
+        TPL = TPL.replace('{api_name}',ApiRow['api_name']);
+    
+    api_url		= ApiRow['api_url'];
+    if( api_url.substr(0,7)!="http://" ){
+    	api_url	= $("div[name='object_host']").text()+api_url;
+    }
+    
+    TPL = TPL.replace(/{api_url}/g,api_url);
+    TPL = TPL.replace(/{api_exp}/g,ApiRow['api_exp']);
+    TPL = TPL.replace(/{api_type}/g,ApiRow['api_type']);
+    TPL = TPL.replace(/{api_id}/g,ApiRow['api_id']);
+    
+    var TPLV    = "";
+    if( typeof ApiRow['api_header']!="undefined" && ApiRow['api_header'].length>0 ){
+        for(ii=0;ii<ApiRow['api_header'].length;ii++){
+            var TPLT        = HTMLTPL['ApiTabTbodyHeader'];
+            var Row         = ApiRow['api_header'][ii];
+            Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
+            Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
+            Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
+            Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
+            
+            TPLT = TPLT.replace("{name}",Row['name']);
+            TPLT = TPLT.replace("{value}",Row['value']);
+            TPLT = TPLT.replace("{exp}",Row['exp']);
+            TPLT = TPLT.replace("{empty}",Row['empty']);
+            TPLV += TPLT;
+        }
+    }
+    TPL 		= TPL.replace(/{ApiTabTbodyHeader}/,TPLV);
+    
+    var TPLV    = "";
+    if( typeof ApiRow['api_request']!="undefined" && ApiRow['api_request'].length>0 ){
+        for(ii=0;ii<ApiRow['api_request'].length;ii++){
+            var TPLT        = HTMLTPL['ApiTabTbodyRequest'];
+            var Row         = ApiRow['api_request'][ii];
+            Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
+            Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
+            Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
+            Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
+            
+            TPLT = TPLT.replace("{name}",Row['name']);
+            TPLT = TPLT.replace("{value}",Row['value']);
+            TPLT = TPLT.replace("{exp}",Row['exp']);
+            TPLT = TPLT.replace("{empty}",Row['empty']);
+            TPLV += TPLT;
+        }
+    }
+    TPL = TPL.replace(/{ApiTabTbodyRequest}/,TPLV);
+    
+    var TPLV    = "";
+    if( typeof ApiRow['api_response']!="undefined" && ApiRow['api_response'].length>0 ){
+        for(ii=0;ii<ApiRow['api_response'].length;ii++){
+            var TPLT        = HTMLTPL['ApiTabTbodyResponse'];
+            var Row         = ApiRow['api_response'][ii];
+            Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
+            Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
+            Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
+            Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
+            
+            TPLT = TPLT.replace("{name}",Row['name']);
+            TPLT = TPLT.replace("{value}",Row['value']);
+            TPLT = TPLT.replace("{exp}",Row['exp']);
+            TPLT = TPLT.replace("{empty}",Row['empty']);
+            TPLV += TPLT;
+        }
+    }
+    TPL = TPL.replace(/{ApiTabTbodyResponse}/,TPLV);
+    
+    $("#ApiTabTbody").append(TPL);
+}
+
+
+
 /**
  * 刷新所有接口
  * @param {type} ObjectId
@@ -632,6 +778,7 @@ function FunShowApiAll(ObjectId){
     if( typeof ObjectId=="undefined"||ObjectId=="" )return;
     
     $("#ApiListTbody").empty();
+    $("#ApiTabTbody").empty();
     
     $.get("api.php?act=show_api&oid="+ObjectId,function(Json){
         if( Json['status']!=true ){
@@ -639,88 +786,17 @@ function FunShowApiAll(ObjectId){
         }else{
             var ApiDom  = Json['data'];
             for(var i in ApiDom){
-                var ApiRow          = ApiDom[i];
-                var TPL = HTMLTPL['ApiListTbody'];
-                
-                //替换左侧列表
-                TPL = TPL.replace(/接口名称/,ApiRow['api_name']);
-                TPL = TPL.replace('class="bgget"','class="bg'+ApiRow['api_type']+'"');
-                TPL = TPL.replace("{api_id}",i);
-                $("#ApiListTbody").append(TPL);
-                
-                //开始写入右侧列表
-                var TPL = HTMLTPL['ApiTabTbody'];
-                TPL = TPL.replace('{api_name}',ApiRow['api_name']);
-                TPL = TPL.replace('{api_host}',ApiRow['api_host']);
-                TPL = TPL.replace('{api_exp}',ApiRow['api_exp']);
-                TPL = TPL.replace('{api_type}',ApiRow['api_type']);
-                TPL = TPL.replace("{api_id}",i);
-                
-                var TPLV    = "";
-                if( typeof ApiRow['api_header']!="undefined" && ApiRow['api_header'].length>0 ){
-                    for(ii=0;ii<ApiRow['api_header'].length;ii++){
-                        var TPLT        = HTMLTPL['ApiTabTbodyHeader'];
-                        var Row         = ApiRow['api_header'][ii];
-                        Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
-                        Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
-                        Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
-                        Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
-                        
-                        TPLT = TPLT.replace("{name}",Row['name']);
-                        TPLT = TPLT.replace("{value}",Row['value']);
-                        TPLT = TPLT.replace("{exp}",Row['exp']);
-                        TPLT = TPLT.replace("{empty}",Row['empty']);
-                        TPLV += TPLT;
-                    }
-                }
-                TPL = TPL.replace(/{ApiTabTbodyHeader}/,TPLV);
-                
-                var TPLV    = "";
-                if( typeof ApiRow['api_request']!="undefined" && ApiRow['api_request'].length>0 ){
-                    for(ii=0;ii<ApiRow['api_request'].length;ii++){
-                        var TPLT        = HTMLTPL['ApiTabTbodyRequest'];
-                        var Row         = ApiRow['api_request'][ii];
-                        Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
-                        Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
-                        Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
-                        Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
-                        
-                        TPLT = TPLT.replace("{name}",Row['name']);
-                        TPLT = TPLT.replace("{value}",Row['value']);
-                        TPLT = TPLT.replace("{exp}",Row['exp']);
-                        TPLT = TPLT.replace("{empty}",Row['empty']);
-                        TPLV += TPLT;
-                    }
-                }
-                TPL = TPL.replace(/{ApiTabTbodyRequest}/,TPLV);
-                
-                var TPLV    = "";
-                if( typeof ApiRow['api_response']!="undefined" && ApiRow['api_response'].length>0 ){
-                    for(ii=0;ii<ApiRow['api_response'].length;ii++){
-                        var TPLT        = HTMLTPL['ApiTabTbodyResponse'];
-                        var Row         = ApiRow['api_response'][ii];
-                        Row['name']     = ( typeof Row['name']=="undefined" )? "" : Row['name'];
-                        Row['value']    = ( typeof Row['value']=="undefined" )? "" : Row['value'];
-                        Row['exp']      = ( typeof Row['exp']=="undefined" )? "" : Row['exp'];
-                        Row['empty']    = ( typeof Row['empty']=="undefined" && (Row['empty']=='true' || Row['empty']==true) )? "true" : "";
-                        
-                        TPLT = TPLT.replace("{name}",Row['name']);
-                        TPLT = TPLT.replace("{value}",Row['value']);
-                        TPLT = TPLT.replace("{exp}",Row['exp']);
-                        TPLT = TPLT.replace("{empty}",Row['empty']);
-                        TPLV += TPLT;
-                    }
-                }
-                TPL = TPL.replace(/{ApiTabTbodyResponse}/,TPLV);
-                
-                $("#ApiTabTbody").append(TPL);
-                
+                CallShowApiTr(ApiDom[i]);
             }
         }
     },'json');
 }
 
 $(document).ready(function(){
+	$("#but_addapi").hide();
+    $("#but_adddom").hide();
+                
+                
     window.HTMLTPL  = [];
     
     //开始获取要显示的模板
