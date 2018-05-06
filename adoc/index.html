@@ -477,8 +477,9 @@ select{
         <div id="ApiTabTbody">
             <div class="dtr" api_id="{api_id}">
                 <span class="dspan ApiName"><span class="bg{api_type}"></span>{api_name}&nbsp;&nbsp;<span class="iedit" title="修改接口" onclick="edit_api('{api_id}')"></span><span class="idel" title="删除接口" onclick="del_api('{api_id}')"></span></span>
-                <div style="height:5px;"></div>
+                <div style="height:10px;"></div>
                 <span class="dspan ApiURL">{api_url}</span>
+                <div style="height:10px;"></div>
                 <span class="dspan">{api_exp}</span>
                 <div style="height:20px;"></div>
                 
@@ -491,6 +492,24 @@ select{
                         <th>Empty</th>
                     </tr>
                     <tbody id="ApiTabTbodyHeader">
+                    <tr>
+                        <td>{name}</td>
+                        <td>{value}</td>
+                        <td>{exp}</td>
+                        <td>{empty}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                
+                <span class="dspan">Request</span>
+                <table width="100%" class="eve_table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Long</th>
+                        <th>Empty</th>
+                    </tr>
+                    <tbody id="ApiTabTbodyRequest">
                     <tr>
                         <td>{name}</td>
                         <td>{value}</td>
@@ -517,24 +536,7 @@ select{
                     </tr>
                     </tbody>
                 </table>
-
-                <span class="dspan">Request</span>
-                <table width="100%" class="eve_table">
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Long</th>
-                        <th>Empty</th>
-                    </tr>
-                    <tbody id="ApiTabTbodyRequest">
-                    <tr>
-                        <td>{name}</td>
-                        <td>{value}</td>
-                        <td>{exp}</td>
-                        <td>{empty}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                
             </div>
         </div>
     </div>

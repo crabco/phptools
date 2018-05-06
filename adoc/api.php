@@ -86,18 +86,24 @@ function run(){
         
         $ApiAll         = get_json($ObjectID);
         
+        usort($ApiAll, "ApiDomSort");
+        $ApiDom         = [];
+        foreach($ApiAll as $Rs){
+            $ApiDom[ $Rs["api_id"] ] = $Rs;
+        }
+        unset($ApiAll);
+        
         if( empty($ApiID) ){
             $Run['status']  = true;
             $Run['error']   = "";
-            $Run['data']    = $ApiAll;
+            $Run['data']    = $ApiDom;
         }else{
             if( !isset($ApiAll[$ApiID]) ){
                 return ['status'=>false,'error'=>'不存在的接口'];
             }
-            
             $Run['status']  = true;
             $Run['error']   = '';
-            $Run['ApiInfo'] = $ApiAll[$ApiID];
+            $Run['ApiInfo'] = $ApiDom[$ApiID];
         }
     }
     
@@ -151,6 +157,10 @@ function run(){
         if( empty($ObjectID) || !ExistsRandId($ObjectID) || !isset($ObjectList[$ObjectID]) ){
             return ['status'=>false,'error'=>'项目非法或者不存在'];;
         }
+        
+        usort($ApiInfo['api_header'],"ApiInfoSort");
+        usort($ApiInfo['api_response'],"ApiInfoSort");
+        usort($ApiInfo['api_request'],"ApiInfoSort");
         
         $ObjectApiDom           = get_json($ObjectID);
         $ObjectApiDom[$ApiID]   = $ApiInfo;
@@ -286,6 +296,26 @@ function ExistsRandId($Id){
 }
 function ExistsKeyName($Name){
     return preg_match('/^[a-z0-9_-]{1,50}$/i', $Name);
+}
+
+function ApiInfoSort($A,$B){
+    if( $A['name']>$B['name'] ){
+        return -1;
+    }elseif( $A['name']==$B['name'] ){
+        return 0;
+    }else{
+        return 1;
+    }
+}
+
+function ApiDomSort($A,$B){
+    if( $A['api_name'] > $B['api_name'] ){
+        return -1;
+    }elseif( $A['api_name']==$B['api_name'] ){
+        return 0;
+    }else{
+        return 1;
+    }
 }
 
 /**
