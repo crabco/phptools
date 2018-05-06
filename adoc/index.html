@@ -209,7 +209,7 @@ select{
     font-size:10px;
     border: #f7f7f7 1px solid;
     padding-left: 5px;
-    width: 25%;
+    width: 30%;
 }
 .ApiName{
     color:#000;
@@ -416,8 +416,8 @@ select{
                 <tbody id="RespTbody">
                 <tr>
                     <td style="text-align: center"><input name="new_apiresponse_name" value="" placeholder="KeyName" /></td>
-                    <td><input name="new_apirequest_value" value="" placeholder="值" /></td>
-                    <td><input name="new_apirequest_exp" value="" placeholder="说明" /></td>
+                    <td><input name="new_apiresponse_value" value="" placeholder="值" /></td>
+                    <td><input name="new_apiresponse_exp" value="" placeholder="说明" /></td>
                     <td>&nbsp;</td>
                 </tr>
                 </tbody>
@@ -789,7 +789,7 @@ function del_api(api_id){
     
     ObjectId    = $("#object_id").val();
     if( confirm('确认删除该接口么?') ){
-        $.get("api.php?act=del_api&oid="+ObjectId+"&api_id=".api_id,function(Json){
+        $.get("api.php?act=del_api&oid="+ObjectId+"&api_id="+api_id,function(Json){
             if( Json['status']!=true ){
                 alert(Json['error']);
             }else{
@@ -842,7 +842,7 @@ function eve_newtr(){
 function head_newtr(Row){
     var TPL     = HTMLTPL['HeadTbody'];
     if( Row!=undefined&&typeof Row['name']!="undefined" ){
-        TPL     = $(HTMLTPL['HeadTbody']);
+        TPL     = $(TPL);
         if( Row['name']!=undefined ) TPL.find("input[name='new_apiheader_name']").val(Row["name"]);
         if( Row['value']!=undefined ) TPL.find("input[name='new_apiheader_value']").val(Row["value"]);
         if( Row['exp']!=undefined ) TPL.find("input[name='new_apiheader_exp']").val(Row["exp"]);
@@ -857,29 +857,29 @@ function head_newtr(Row){
 function requ_newtr(Row){
     var TPL     = HTMLTPL['RequTbody'];
     if( Row!=undefined&&typeof Row['name']!="undefined" ){
-        TPL     = $(HTMLTPL['RequTbody']);
-        if( Row['name']!=undefined ) TPL.find("input[name='new_apiheader_name']").val(Row["name"]);
-        if( Row['value']!=undefined ) TPL.find("input[name='new_apiheader_value']").val(Row["value"]);
-        if( Row['exp']!=undefined ) TPL.find("input[name='new_apiheader_exp']").val(Row["exp"]);
+        TPL     = $(TPL);
+        if( Row['name']!=undefined ) TPL.find("input[name='new_apirequest_name']").val(Row["name"]);
+        if( Row['value']!=undefined ) TPL.find("input[name='new_apirequest_value']").val(Row["value"]);
+        if( Row['exp']!=undefined ) TPL.find("input[name='new_apirequest_exp']").val(Row["exp"]);
         if( Row['name']!=undefined && Row["empty"]=='true'||Row["empty"]==true ){
-            TPL.find("input[name='new_apiheader_empty']").attr("checked",true);
+            TPL.find("input[name='new_apirequest_empty']").attr("checked",true);
         }else{
-            TPL.find("input[name='new_apiheader_empty']").attr("checked",false);
+            TPL.find("input[name='new_apirequest_empty']").attr("checked",false);
         }
     }
     $("#RequTbody").append( TPL );
 }
 function resp_newtr(Row){
-    var TPL     = HTMLTPL['RequTbody'];
+    var TPL     = HTMLTPL['RespTbody'];
     if( Row!=undefined&&typeof Row['name']!="undefined" ){
-        TPL     = $(HTMLTPL['RequTbody']);
-        if( Row['name']!=undefined ) TPL.find("input[name='new_apiheader_name']").val(Row["name"]);
-        if( Row['value']!=undefined ) TPL.find("input[name='new_apiheader_value']").val(Row["value"]);
-        if( Row['exp']!=undefined ) TPL.find("input[name='new_apiheader_exp']").val(Row["exp"]);
+        TPL     = $(TPL);
+        if( Row['name']!=undefined ) TPL.find("input[name='new_apiresponse_name']").val(Row["name"]);
+        if( Row['value']!=undefined ) TPL.find("input[name='new_apiresponse_value']").val(Row["value"]);
+        if( Row['exp']!=undefined ) TPL.find("input[name='new_apiresponse_exp']").val(Row["exp"]);
         if( Row['name']!=undefined && Row["empty"]=='true'||Row["empty"]==true ){
-            TPL.find("input[name='new_apiheader_empty']").attr("checked",true);
+            TPL.find("input[name='new_apiresponse_empty']").attr("checked",true);
         }else{
-            TPL.find("input[name='new_apiheader_empty']").attr("checked",false);
+            TPL.find("input[name='new_apiresponse_empty']").attr("checked",false);
         }
     }
     $("#RespTbody").append( TPL );
