@@ -225,6 +225,9 @@ function run(){
             return ['status'=>false,'error'=>'项目非法'];
         }
         
+        copy(ObjectListName.".json",ObjectListName.date("-YmdHis").".json");
+        copy($ObjectID.".json",$ObjectID.date("-YmdHis").".json");
+        
         //导出为网页
         $HTML                      = file_get_contents("index.html");
         
