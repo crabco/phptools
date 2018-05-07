@@ -137,8 +137,8 @@ input{
     border: #5fca3a 1px solid;
 }
 textarea{
-    min-width: 240px;
-    min-height: 200px;
+    min-width: 90%;
+    min-height: 100px;
     padding:5px;
     border-radius: 3px;
     border: #5fca3a 1px solid;
@@ -195,13 +195,16 @@ select{
     margin-bottom: 20px;
 }
 .eve_table th{
-    background-color:#f7f7f7;
+    background-color:#f9f9f9;
     height:20px;
     font-size: 10px;
     font-weight: normal;
+    #dad9d9;
+    border: #f3f3f3 1px solid;
+    color: #cecece;
 }
-.eve_table tr:nth-child(odd){
-    background-color:#eee;
+.eve_table tr:nth-child(even){
+    background-color:#f9f9f9;
 }
 .eve_table td{
     text-align: left;
@@ -218,12 +221,23 @@ select{
     margin-top: 30px;
 }
 .ApiURL{
-    font-size:12px;
-    color:#000;
-    background-color:#eaffee;
-    width:100%;
-    padding: 5px;
+    font-size: 12px;
+    background-color: #fffcea;
+    width: 98%;
+    padding: 9px;
     margin-bottom: 5px;
+    display: block;
+    color: #696969;
+}
+.ApiJson{
+	font-size: 12px;
+    color: #000;
+    background-color: #eaffee;
+    width: 98%;
+    padding: 10px;
+    margin-bottom: 5px;
+    border: #a9e0b3 1px solid;
+    border-radius: 5px;
 }
 .iedit{
     font-family: arial;
@@ -404,7 +418,7 @@ select{
                 </tr>
                 <tbody id="RequTbody">
                 <tr>
-                    <td style="text-align: center"><input name="new_apirequest_name" value="" placeholder="KeyName" /></td>
+                    <td style="text-align: center;"><input name="new_apirequest_name" value="" placeholder="KeyName" /></td>
                     <td><input name="new_apirequest_value" value="" placeholder="值" /></td>
                     <td><input name="new_apirequest_exp" value="" placeholder="说明" /></td>
                     <td><input name="new_apirequest_empty" type="checkbox" style="width:40px;min-width: 0px;"/></td>
@@ -414,12 +428,20 @@ select{
                     <th colspan="4" style="cursor:pointer;" onclick="resp_newtr()">Response + </th>
                 </tr>
                 <tbody id="RespTbody">
-                <tr>
-                    <td style="text-align: center"><input name="new_apiresponse_name" value="" placeholder="KeyName" /></td>
-                    <td><input name="new_apiresponse_value" value="" placeholder="值" /></td>
-                    <td><input name="new_apiresponse_exp" value="" placeholder="说明" /></td>
-                    <td>&nbsp;</td>
-                </tr>
+	                <tr>
+	                    <td style="text-align:left;" width="35%;">
+                                <span name="left_int"></span>
+                                <input name="new_apiresponse_left" type="hidden" value=""/>
+                                <input name="new_apiresponse_name" style="width:50%;" value="" placeholder="KeyName" />
+                            </td>
+	                    <td width="30%;"><input name="new_apiresponse_value" value="" placeholder="值" /></td>
+	                    <td width="30%;"><input name="new_apiresponse_exp" value="" placeholder="说明" /></td>
+	                    <td width="5%;">
+	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">-+</span>]&nbsp;
+	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">+</span>]&nbsp;
+	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-')" title="移除当前元素">-</span>]&nbsp;
+	                    </td>
+	                </tr>
                 </tbody>
                 <tr>
                     <th colspan="4" style="background-color:#FFF; height: 50px;">
@@ -483,7 +505,7 @@ select{
                 <span class="dspan">{api_exp}</span>
                 <div style="height:20px;"></div>
                 
-                <span class="dspan">Header</span>
+                <span class="dspanExp">Header</span>
                 <table width="100%" class="eve_table">
                     <tr>
                         <th>Name</th>
@@ -501,7 +523,7 @@ select{
                     </tbody>
                 </table>
                 
-                <span class="dspan">Request</span>
+                <span class="dspanExp">Request</span>
                 <table width="100%" class="eve_table">
                     <tr>
                         <th>Name</th>
@@ -519,7 +541,7 @@ select{
                     </tbody>
                 </table>
 
-                <span class="dspan">Response</span>
+                <span class="dspanExp">Response</span>
                 <table width="100%" class="eve_table">
                     <tr>
                         <th>Name</th>
@@ -536,6 +558,10 @@ select{
                     </tr>
                     </tbody>
                 </table>
+                
+                <div class="dspan ApiJson">
+                	<div id="ApiTabTbodyJson">{api_response_json}</div>
+                </div>
                 
             </div>
         </div>
@@ -638,9 +664,10 @@ function save_api(cont){
     }
     for(i=0;i<$("input[name='new_apiresponse_name']").length;i++){
         PostData['api_response'][i]    = {
-            'name':     $("input[name='new_apiresponse_name']").eq(i).val(),
-            'value':    $("input[name='new_apiresponse_value']").eq(i).val(),
-            'exp':      $("input[name='new_apiresponse_exp']").eq(i).val(),
+        	'left'	:	$("input[name='new_apiresponse_left']").eq(i).val(),
+            'name'	:   $("input[name='new_apiresponse_name']").eq(i).val(),
+            'value'	:   $("input[name='new_apiresponse_value']").eq(i).val(),
+            'exp'	:   $("input[name='new_apiresponse_exp']").eq(i).val(),
         }
     }
     $.post('api.php?act=save_api',{"data":PostData},function(Run){
@@ -871,6 +898,7 @@ function requ_newtr(Row){
     }
     $("#RequTbody").append( TPL );
 }
+
 function resp_newtr(Row){
     var TPL     = HTMLTPL['RespTbody'];
     if( Row!=undefined&&typeof Row['name']!="undefined" ){
@@ -878,14 +906,43 @@ function resp_newtr(Row){
         if( Row['name']!=undefined ) TPL.find("input[name='new_apiresponse_name']").val(Row["name"]);
         if( Row['value']!=undefined ) TPL.find("input[name='new_apiresponse_value']").val(Row["value"]);
         if( Row['exp']!=undefined ) TPL.find("input[name='new_apiresponse_exp']").val(Row["exp"]);
+        
+        if( Row['left']!=undefined&&Row['left']!='undefined' ){
+        	TPL.find("input[name='new_apiresponse_left']").val(Row['left']);
+        	TPL.find("span[name='left_int']").text( Row['left'] );
+        }
+        
         if( Row['name']!=undefined && Row["empty"]=='true'||Row["empty"]==true ){
             TPL.find("input[name='new_apiresponse_empty']").attr("checked",true);
         }else{
             TPL.find("input[name='new_apiresponse_empty']").attr("checked",false);
         }
+        
     }
     $("#RespTbody").append( TPL );
 }
+
+function resp_newchilds(Ths,Act){
+	var ThsDom = $(Ths).parent().parent();
+	var ThsID	= ThsDom.find("span[name='left_int']").text();
+        
+	if( Act=="-" ){
+		ThsDom.remove();
+	}
+	if( Act=="+" ){
+		var TPL     = $(HTMLTPL['RespTbody']);
+		TPL.find("span[name='left_int']").text( ThsID );
+		TPL.find("input[name='new_apiresponse_left']").val( ThsID );
+		ThsDom.after(TPL);
+	}
+	if( Act=="-+" ){
+		var TPL     = $(HTMLTPL['RespTbody']);
+		TPL.find("span[name='left_int']").text( ThsID+'-' );
+		TPL.find("input[name='new_apiresponse_left']").val( ThsID+'-' );
+		ThsDom.after(TPL);
+	}
+}
+
 
 
 /**
@@ -953,11 +1010,11 @@ function FunShowObjectInfo(SeleID){
     for(var i in ObjectList){
         if( SeleID==i ){
             Dom = ObjectList[i];
-            
             $("[name='object_name']").text( Dom['object_name'] );
             $("[name='object_exp']").text( Dom['object_exp'] );
             $("[name='object_host']").text( Dom['object_host'] );
             $("[name='object_header']").text( JSON.stringify(Dom['object_header']) );
+            document.title = Dom['object_name']+"-Adoc自动接口工具";
         }
     }
 }
@@ -967,13 +1024,24 @@ function FunShowObjectInfo(SeleID){
  * @param {Object} ApiRow
  */
 function CallShowApiTr(ApiRow){
-    var TPL 			= HTMLTPL['ApiListTbody'];
     
-    //新增左侧接口列表
-    TPL = TPL.replace(/{api_name}/g,ApiRow['api_name']);
-    TPL = TPL.replace(/{api_type}/g,ApiRow['api_type']);
-    TPL = TPL.replace(/{api_id}/g,  ApiRow['api_id']);
-    $("#ApiListTbody").append(TPL);
+    
+    ApiID				= ApiRow['api_id'];
+    
+    //新增或者修改左侧接口列表
+    var TPL 			= HTMLTPL['ApiListTbody'];
+	    TPL = TPL.replace(/{api_name}/g,ApiRow['api_name']);
+	    TPL = TPL.replace(/{api_type}/g,ApiRow['api_type']);
+	    TPL = TPL.replace(/{api_id}/g,  ApiRow['api_id']);
+	    
+    if( $("#left_"+ApiID).length>0 ){
+    	var Dom = $( "#left_"+ApiID );
+    	Dom.before(TPL);
+    	Dom.remove();
+    }else{
+	    $("#ApiListTbody").append(TPL);
+    }
+    
     
     //新增右侧接口列表
     var TPL = HTMLTPL['ApiTabTbody'];
@@ -1005,8 +1073,10 @@ function CallShowApiTr(ApiRow){
             TPLT = TPLT.replace("{empty}",Row['empty']);
             TPLV += TPLT;
         }
+        
     }
     TPL 		= TPL.replace(/{ApiTabTbodyHeader}/,TPLV);
+    
     
     var TPLV    = "";
     if( typeof ApiRow['api_request']!="undefined" && ApiRow['api_request'].length>0 ){
@@ -1044,9 +1114,25 @@ function CallShowApiTr(ApiRow){
             TPLV += TPLT;
         }
     }
+    
     TPL = TPL.replace(/{ApiTabTbodyResponse}/,TPLV);
     
-    $("#ApiTabTbody").append(TPL);
+    if( typeof ApiRow['api_response_json']=="object" ){
+		var JsonText	= JSON.stringify(ApiRow['api_response_json'],null,4);
+			JsonText	= JsonText.replace(/\n/g,"<br>");
+			JsonText	= JsonText.replace(/ /g,"&nbsp;&nbsp;");
+			
+		TPL				= TPL.replace("{api_response_json}", JsonText );
+	}
+    
+    if( $("div[api_id='"+ApiID+"']").length>0 ){
+    	var Dom = $("div[api_id='"+ApiID+"']");
+    	Dom.before(TPL);
+    	Dom.remove();
+    }else{
+	    $("#ApiTabTbody").append(TPL);
+    }
+    
 }
 
 

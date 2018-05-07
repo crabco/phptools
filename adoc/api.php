@@ -1,5 +1,7 @@
 <?php
-error_reporting(0);
+if( !empty($_GET['debug']) ){
+    error_reporting(0);
+}
 
 define('ObjectListName', "object_list");
 
@@ -79,13 +81,15 @@ function run(){
         if( empty($ObjectID) || !ExistsRandId($ObjectID) ){
             return ['status'=>false,'error'=>'项目非法'];
         }
-        $ApiID          = trim($_GET['api_id']);
+        $ApiID          = ( !empty($_GET['api_id']) )? trim($_GET['api_id']) : "";
         if( !empty($ApiID)&&!ExistsRandId($ApiID) ){
             return ['status'=>false,'error'=>'接口序号非法'];
         }
         
         $ApiAll         = get_json($ObjectID);
         
+        
+        //根据接口名称排序
         usort($ApiAll, "ApiDomSort");
         $ApiDom         = [];
         foreach($ApiAll as $Rs){
@@ -93,12 +97,15 @@ function run(){
         }
         unset($ApiAll);
         
+        //将列对象转换为JSON对象
+        $ApiDom    = ApiRowToJson($ApiDom);
+        
         if( empty($ApiID) ){
             $Run['status']  = true;
             $Run['error']   = "";
             $Run['data']    = $ApiDom;
         }else{
-            if( !isset($ApiAll[$ApiID]) ){
+            if( !isset($ApiDom[$ApiID]) ){
                 return ['status'=>false,'error'=>'不存在的接口'];
             }
             $Run['status']  = true;
@@ -148,9 +155,10 @@ function run(){
         }
         if( !empty($PostData['api_response']) ){
             foreach($PostData['api_response'] as $vs){
-                if( empty($vs['name'])||!ExistsKeyName($vs['name']) ){continue;}
-                $vs['empty'] = ( $vs['empty']!='true'||$vs['empty']!=true )? true : false;
-                $ApiInfo["api_response"][]   = ['name'=>$vs['name'],'value'=>$vs['value'],'exp'=>$vs['exp'],'empty'=>$vs['empty']];
+                if( trim($vs['name'])==""||!ExistsKeyName($vs['name']) ){continue;}
+//                $vs['empty']    = ( $vs['empty']!='true'||$vs['empty']!=true )? true : false;
+                $vs['left']     = ( empty($vs['left'])||trim($vs['left'])=='undefined' )? "" : $vs['left'];
+                $ApiInfo["api_response"][]   = ['left'=>$vs['left'],'name'=>$vs['name'],'value'=>$vs['value'],'exp'=>$vs['exp']];
             }
         }
         
@@ -159,12 +167,14 @@ function run(){
         }
         
         usort($ApiInfo['api_header'],"ApiInfoSort");
-        usort($ApiInfo['api_response'],"ApiInfoSort");
         usort($ApiInfo['api_request'],"ApiInfoSort");
+//        usort($ApiInfo['api_response'],"ApiInfoSort");
         
         $ObjectApiDom           = get_json($ObjectID);
         $ObjectApiDom[$ApiID]   = $ApiInfo;
         
+        $ApiInfos               = ApiRowToJson([0=>$ApiInfo]);
+        $ApiInfo                = $ApiInfos[0];
         
         if( !set_json($ObjectID, $ObjectApiDom) ){
             $Run['status']          = false;
@@ -299,6 +309,13 @@ function ExistsKeyName($Name){
 }
 
 function ApiInfoSort($A,$B){
+    if( $A['name']=='status'||$A['name']=='error'||$A['name']=='results' ){
+        return -1;
+    }
+    if( $B['name']=='status'||$B['name']=='error'||$B['name']=='results' ){
+        return 1;
+    }
+    
     if( $A['name']>$B['name'] ){
         return -1;
     }elseif( $A['name']==$B['name'] ){
@@ -316,6 +333,71 @@ function ApiDomSort($A,$B){
     }else{
         return 1;
     }
+}
+
+/**
+ * 行数据转JSON
+ * @param type $Response
+ * @return boolean
+ */
+function ApiRowToJson($Response){
+    
+    if( !empty($Response) ){
+        foreach($Response as $Vs=>$Rs){
+            $Dom    = $Rs['api_response'];
+            
+//            //临时处理,将原有数据非对象载入对象
+//            if( count($Dom)>3 && !isset($Dom['results']['left']) ){
+//                usort($Dom,"ApiInfoSort");
+//                foreach($Dom as $Vss=>$Rss){
+//                    if( $Rss['name']!='status' && $Rss['name']!='error' && $Rss['name']!='results' ){
+//                        $Dom[$Vss]['left']    = "-";
+//                    }
+//                }
+//                $Response[$Vs]['api_response'] = $Dom;
+//            }
+            
+            
+            $Json   = [];
+            $Left   = [];
+            if( count($Dom)>0 ){
+                foreach($Dom as $Vss=>$Rss){
+                    
+                    $Eval   = '';
+                    
+                    if( empty($Rss['left'])||trim($Rss['left'])=="undefined" ){
+                        $Rss['left']    = "";
+                    }
+                    $Li                 = strlen($Rss['left']);
+                    
+                    $Left[ $Li ]        = "[\"{$Rss['name']}\"]";
+                    
+                    for($i=$Li-1;$i>=0;$i--){
+                        $Eval = $Left[$i].$Eval;
+                    }
+                    
+                    $Val    = ( $Rss['value']=='""' )? "" : $Rss['value'];
+                    $Val    = ( $Val=="''" )? "" : $Val;
+                    
+                    if( gettype($Val)=="string" ){
+                        $Val    = addcslashes($Val,"\"");
+                        $Val    = "\"{$Val}\"";
+                    }
+                    
+                    $Eval   = 'if( !is_array($Json'. $Eval . ') ){ $Json'. $Eval . '=[]; }'
+                            . 'if( !isset($Json'. $Eval . ') ){ $Json'. $Eval . '=[]; }'
+                            . ' $Json'. $Eval . '["'.$Rss['name'].'"] = '. $Val .';';
+                    try{
+                        eval($Eval);
+                    }catch (Exception $e){
+                        $Json   = ['status'=>false,'error'=>'数组格式错误'];
+                    }
+                }
+                $Response[$Vs]['api_response_json']  = $Json;
+            }
+        }
+    }
+    return $Response;
 }
 
 /**
