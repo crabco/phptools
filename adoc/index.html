@@ -432,14 +432,18 @@ select{
 	                    <td style="text-align:left;" width="35%;">
                                 <span name="left_int"></span>
                                 <input name="new_apiresponse_left" type="hidden" value=""/>
-                                <input name="new_apiresponse_name" style="width:50%;" value="" placeholder="KeyName" />
+                                <input name="new_apiresponse_name" style="width:50%;" value="" placeholder="KeyName" />&nbsp;
+                                <span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'<')" title="向上移动层级">◀</span>
+                                <span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'>')" title="向下移动层级">▶</span>
                             </td>
 	                    <td width="30%;"><input name="new_apiresponse_value" value="" placeholder="值" /></td>
 	                    <td width="30%;"><input name="new_apiresponse_exp" value="" placeholder="说明" /></td>
 	                    <td width="5%;">
-	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">-+</span>]&nbsp;
-	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">+</span>]&nbsp;
-	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-')" title="移除当前元素">-</span>]&nbsp;
+	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">✚</span>
+	                    	<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-')" title="移除当前元素">✖</span>
+	                    	<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'^')" title="上移元素">▲</span>]
+	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">↩</span>
+	                    	<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'c')" title="复制本级元素与下级元素">❒</span>]
 	                    </td>
 	                </tr>
                 </tbody>
@@ -923,7 +927,7 @@ function resp_newtr(Row){
 }
 
 function resp_newchilds(Ths,Act){
-	var ThsDom = $(Ths).parent().parent();
+	var ThsDom  = $(Ths).parent().parent();
 	var ThsID	= ThsDom.find("span[name='left_int']").text();
         
 	if( Act=="-" ){
@@ -940,6 +944,75 @@ function resp_newchilds(Ths,Act){
 		TPL.find("span[name='left_int']").text( ThsID+'-' );
 		TPL.find("input[name='new_apiresponse_left']").val( ThsID+'-' );
 		ThsDom.after(TPL);
+	}
+	//移动到上级
+	if( Act=="<" ){
+	    ThsID = ThsID.substr(1);
+	    ThsDom.find("span[name='left_int']").text( ThsID );
+	    ThsDom.find("input[name='new_apiresponse_left']").val( ThsID );
+	}
+	//移动到下级
+	if( Act==">" ){
+        ThsID = ThsID+'-';
+        ThsDom.find("span[name='left_int']").text( ThsID );
+        ThsDom.find("input[name='new_apiresponse_left']").val( ThsID );
+    }
+	//上下移动
+	if( Act=='^' ){
+	    var TopDomInp  = ThsDom.prev().find("input");
+	    
+	    //先添加下级节点
+	    var TPLA       = $(HTMLTPL['RespTbody']);
+	    ThsID          = $(TopDomInp[0]).val();
+        TPLA.find("span[name='left_int']").text( ThsID );
+        TPLA.find("input[name='new_apiresponse_left']").val( ThsID );
+        for(i=0;i<TopDomInp.length;i++){
+            TPLA.find("input").eq(i).val( $(TopDomInp[i]).val() );
+        }
+        ThsDom.after(TPLA);
+        ThsDom.prev().remove();
+	}
+	
+	//复制本级别与下一个级别
+	if( Act=='c' ){
+	    
+	    var NewInp     = [];
+	    var Inp        = ThsDom.find("input");
+	    var InpRow     = [];
+	    for(var i=0;i<Inp.length;i++){
+	        InpRow.push( $(Inp[i]).val() );
+	    }
+	    NewInp.push( InpRow );
+	    
+	    var NextDom    = ThsDom;
+	    for(var i=0;i<500;i++){
+	        var NextDom    = NextDom.next();
+	        
+	        //如果是最后一个元素，则跳出
+	        if( NextDom.length<=0||NextDom.html()==undefined )break;
+	        
+	        NextID         = NextDom.find("span[name='left_int']").text();
+	        //如果等级高于当前,则跳出
+	        if( NextID.length<=ThsID.length )break;
+	        
+	        var Inp        = NextDom.find("input");
+            var InpRow     = [];
+            for(var i=0;i<Inp.length;i++){
+                InpRow.push( $(Inp[i]).val() );
+            }
+            NewInp.push( InpRow );
+	    }
+	    
+	    for(var i=0;i<NewInp.length;i++){
+	        NextID     = NewInp[i][0];
+	        var TPL    = $(HTMLTPL['RespTbody']);
+            TPL.find("span[name='left_int']").text( NextID );
+            TPL.find("input[name='new_apiresponse_left']").val( NextID );
+            for(var ii=0; ii<NewInp[i].length; ii++){
+                TPL.find("input").eq(ii).val( NewInp[i][ii] );
+            }
+            ThsDom.before(TPL);
+	    }
 	}
 }
 
