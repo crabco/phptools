@@ -602,7 +602,12 @@ function show_apitab(){
     $('#mask').show();
     $('#mask_api').show();
     $("input[name='new_api_id']").val("");
+    
+    //自动添加HEADER
+    
 }
+
+
 function show_objecttab(){
     //离线版不允许操作
     if( !ExistsLine() ){return;}

@@ -235,6 +235,8 @@ function run(){
         $Object[$ObjectID]         = $ObjectAll[$ObjectID];
         $ApiAll                    = get_json($ObjectID);
         
+        $ApiAll                    = ApiRowToJson($ApiAll);
+        
         $FileName                  = $Object[$ObjectID]['object_name']."-".date("Y年m月d日")."版本";
         $HTML                      = preg_replace('/LocalObject[ ]+\=[ ]+null;/i', "LocalObject = " . json_encode($Object), $HTML);
         $HTML                      = preg_replace('/LocalApiRow[ ]+\=[ ]+null;/i', "LocalApiRow = " . json_encode($ApiAll), $HTML);
@@ -348,18 +350,6 @@ function ApiRowToJson($Response){
     if( !empty($Response) ){
         foreach($Response as $Vs=>$Rs){
             $Dom    = $Rs['api_response'];
-            
-//            //临时处理,将原有数据非对象载入对象
-//            if( count($Dom)>3 && !isset($Dom['results']['left']) ){
-//                usort($Dom,"ApiInfoSort");
-//                foreach($Dom as $Vss=>$Rss){
-//                    if( $Rss['name']!='status' && $Rss['name']!='error' && $Rss['name']!='results' ){
-//                        $Dom[$Vss]['left']    = "-";
-//                    }
-//                }
-//                $Response[$Vs]['api_response'] = $Dom;
-//            }
-            
             
             $Json   = [];
             $Left   = [];
