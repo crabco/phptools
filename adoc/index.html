@@ -1420,34 +1420,6 @@ function FunAutoLeft(Tag){
     }
 }
 
-function FunKeyTab(Key){
-    var ThsDom = $(document.activeElement);
-    
-    window.console.log(Key.keyCode);
-    
-    //设定如果是最后一个EXP则添加一个新的行
-    if( Key.keyCode==9 ){
-        var Inp = $("input[name='new_apiresponse_exp']");
-        var Max = Inp.length - 1;
-        if( ThsDom[0]==Inp[Max] ){
-            $("[name='but_resp_add']").eq(Max).click();
-            window.console.log(true);
-        }
-    }
-    
-    //设定Ctrl+S为保存继续
-    if( Key.keyCode==83&&Key.ctrlKey==true ){
-        $("[name='but_apisave_continue']").eq(0).click();
-        return false;
-    }
-    
-    //ESC关闭当前对话框
-    if( Key.keyCode==27 ){
-        $("[name='but_apiesc']").click();
-    }
-    
-}
-
 /**
  * 是否允许在线操作
  */
@@ -1504,13 +1476,47 @@ $(document).ready(function(){
     },100);
     
     
-    $("#mask_api").bind('keydown',function(event){return FunKeyTab(event)});
+    //键盘监听
+    $("#mask_api").bind('keydown',function(Key){
+        
+        var ThsDom = $(document.activeElement);
+        window.console.log(Key.keyCode);
+        
+        //设定如果是最后一个EXP则添加一个新的行
+        if( Key.keyCode==9 ){
+            var Inp = $("input[name='new_apiresponse_exp']");
+            var Max = Inp.length - 1;
+            if( ThsDom[0]==Inp[Max] ){
+                $("[name='but_resp_add']").eq(Max).click();
+            }
+        }
+        //如果是最后一个EXP并且敲入回车则保存关闭
+        if( Key.keyCode==13 ){
+            var Inp = $("input[name='new_apiresponse_exp']");
+            var Max = Inp.length - 1;
+            if( ThsDom[0]==Inp[Max] ){
+                $("[name='but_apisave_close']").eq(0).click();
+            }
+        }
+        
+        //设定Ctrl+S为保存继续
+        if( Key.keyCode==83&&Key.ctrlKey==true ){
+            $("[name='but_apisave_continue']").eq(0).click();
+            return false;
+        }
+        
+        //ESC关闭当前对话框
+        if( Key.keyCode==27 ){
+            $("[name='but_apiesc']").click();
+        }
+    });
     
     $(document).bind('keydown',function(event){
         console.log(event.keyCode);
-        if( event.keyCode==78 ){
+        if( event.keyCode==78 && event.altKey==true && $("#mask_api").is(":hidden") ){
             $("#but_addapi").click();
-            return;
+            $("[name='new_apiname']").focus();
+            return false;
         }
     });
     
