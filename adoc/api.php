@@ -43,6 +43,18 @@ function run(){
                 $ObjectInfo["object_header"][$vs['name']]   = $vs['value'];
             }
         }
+        if( !empty($PostData['object_request']) ){
+            foreach($PostData['object_request'] as $vs){
+                if( empty($vs['name'])||!ExistsKeyName($vs['name']) )continue;
+                $ObjectInfo["object_request"][$vs['name']]   = $vs['value'];
+            }
+        }
+        if( !empty($PostData['object_response']) ){
+            foreach($PostData['object_response'] as $vs){
+                if( empty($vs['name'])||!ExistsKeyName($vs['name']) )continue;
+                $ObjectInfo["object_response"][$vs['name']]   = $vs['value'];
+            }
+        }
         if( !set_object($ObjectID, $ObjectInfo) ){
             $Run        = ['status'=>false,'error'=>'存储失败'];
         }else{

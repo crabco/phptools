@@ -206,6 +206,9 @@ select{
 .eve_table tr:nth-child(even){
     background-color:#f9f9f9;
 }
+.eve_table tr:hover{
+    background-color:#e9e9e9;
+}
 .eve_table td{
     text-align: left;
     height:30px;
@@ -314,18 +317,46 @@ select{
                     <td>项目说明</td>
                     <td style="text-align:left;"><textarea name="object_exp_new" style="min-height:100px; width:90%"></textarea></td>
                 </tr>
+                
                 <tr>
-                    <td colspan="2" onclick="objhead_newtr()">全局Header设置+</td>
+                    <td colspan="2" onclick="objhead_newtr()">默认Header+</td>
                 </tr>
                 <tbody id="ObjHeadTbody">
                 <tr>
                     <td>&nbsp;</td>
                     <td style="text-align:left;">
-                        <input style="width:30%" name="object_header_name_new" value="" placeholder="KeyName"/>
-                        <input style="width:30%" name="object_header_value_new" value="" placeholder="KeyValue"/>
+                        <input style="width:40%" name="object_header_name_new" value="" placeholder="KeyName"/>
+                        <input style="width:40%" name="object_header_value_new" value="" placeholder="KeyValue"/>
                     </td>
                 </tr>
                 </tbody>
+                
+                <tr>
+                    <td colspan="2" onclick="objrequ_newtr()">默认Request+</td>
+                </tr>
+                <tbody id="ObjRequTbody">
+                <tr>
+                    <td>&nbsp;</td>
+                    <td style="text-align:left;">
+                        <input style="width:40%" name="object_request_name_new" value="" placeholder="KeyName"/>
+                        <input style="width:40%" name="object_request_value_new" value="" placeholder="KeyValue"/>
+                    </td>
+                </tr>
+                </tbody>
+                
+                <tr>
+                    <td colspan="2" onclick="objresp_newtr()">默认Response+</td>
+                </tr>
+                <tbody id="ObjRespTbody">
+                <tr>
+                    <td>&nbsp;</td>
+                    <td style="text-align:left;">
+                        <input style="width:40%" name="object_response_name_new" value="" placeholder="KeyName"/>
+                        <input style="width:40%" name="object_response_value_new" value="" placeholder="KeyValue"/>
+                    </td>
+                </tr>
+                </tbody>
+                
                 <tr>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -430,8 +461,8 @@ select{
                 <tbody id="RespTbody">
 	                <tr>
 	                    <td style="text-align:left;" width="35%;">
-                                <span name="left_int"></span>
-                                <input name="new_apiresponse_left" type="hidden" value=""/>
+                                <span name="resp_left_int"></span>
+                                <input name="resp_left_val" type="hidden" value=""/>
                                 <input name="new_apiresponse_name" style="width:50%;" value="" placeholder="KeyName" />&nbsp;
                                 <span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'<')" title="向上移动层级">◀</span>
                                 <span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'>')" title="向下移动层级">▶</span>
@@ -498,7 +529,9 @@ select{
     <div class="dtd">
         <div class="dspan" style="font-size:24px;margin-bottom:10px;" name="object_name">项目名称</div>
         <div class="dspan" style="font-size:12px;margin-bottom:5px;" name="object_host">项目主地址</div>
-        <div class="dspan" style="font-size:12px;margin-bottom:5px;" name="object_header">全局发送数据</div>
+        <div class="dspan" style="font-size:12px;margin-bottom:5px;" name="object_header"></div>
+        <div class="dspan" style="font-size:12px;margin-bottom:5px;" name="object_request"></div>
+        <div class="dspan" style="font-size:12px;margin-bottom:5px;" name="object_response"></div>
         
         <div id="ApiTabTbody">
             <div class="dtr" api_id="{api_id}">
@@ -592,6 +625,7 @@ function sele_objtab(){
 		FunShowApiAll(SeleID);
 	}
 }
+
 function show_apitab(){
     //离线版不允许操作
     if( !ExistsLine() ){return;}
@@ -604,7 +638,35 @@ function show_apitab(){
     $("input[name='new_api_id']").val("");
     
     //自动添加HEADER
-    
+    $("#HeadTbody").empty();
+    var DefHead = $("[name='object_header']").text();
+    if( DefHead!=""&&DefHead!=undefined ){
+        var DefJson = JSON.parse(DefHead);
+        for(var i in DefJson){
+            var Row = {'name':i,'exp':'全局参数','value':DefJson[i]};
+            head_newtr(Row);
+        }
+    }
+    //自动添加Request
+    $("#RequTbody").empty();
+    var DefHead = $("[name='object_request']").text();
+    if( DefHead!=""&&DefHead!=undefined ){
+        var DefJson = JSON.parse(DefHead);
+        for(var i in DefJson){
+            var Row = {'name':i,'exp':'全局参数','value':DefJson[i]};
+            requ_newtr(Row);
+        }
+    }
+    //自动添加Response
+    $("#RespTbody").empty();
+    var DefHead = $("[name='object_response']").text();
+    if( DefHead!=""&&DefHead!=undefined ){
+        var DefJson = JSON.parse(DefHead);
+        for(var i in DefJson){
+            var Row = {'name':i,'exp':'全局参数','value':DefJson[i]};
+            resp_newtr(Row);
+        }
+    }
 }
 
 
@@ -654,6 +716,10 @@ function save_api(cont){
         alert('请先选择项目');
         return;
     }
+    
+    FunAutoLeft('resp')
+    
+    
     for(i=0;i<$("input[name='new_apiheader_name']").length;i++){
         var Tmp = 
         PostData['api_header'][i]    = {
@@ -673,7 +739,7 @@ function save_api(cont){
     }
     for(i=0;i<$("input[name='new_apiresponse_name']").length;i++){
         PostData['api_response'][i]    = {
-        	'left'	:	$("input[name='new_apiresponse_left']").eq(i).val(),
+        	'left'	:	$("input[name='resp_left_val']").eq(i).val(),
             'name'	:   $("input[name='new_apiresponse_name']").eq(i).val(),
             'value'	:   $("input[name='new_apiresponse_value']").eq(i).val(),
             'exp'	:   $("input[name='new_apiresponse_exp']").eq(i).val(),
@@ -700,13 +766,28 @@ function save_object(){
         'object_exp'       : $("textarea[name='object_exp_new']").val(),
         'object_host'      : $("input[name='object_host_new']").val(),
         'object_header'    : [],
+        'object_request'   : [],
+        'object_response'  : [],
     };
-    for(i=0;i<$("input[name='object_header_name_new']").length;i++){
+    for(var i=0;i<$("input[name='object_header_name_new']").length;i++){
         PostData['object_header'][i]    = {
             'name'   :    $("input[name='object_header_name_new']").eq(i).val(),
-            'value' :    $("input[name='object_header_value_new']").eq(i).val(),
+            'value'  :    $("input[name='object_header_value_new']").eq(i).val(),
         }
     }
+    for(var i=0;i<$("input[name='object_request_name_new']").length;i++){
+        PostData['object_request'][i]    = {
+            'name'   :    $("input[name='object_request_name_new']").eq(i).val(),
+            'value'  :    $("input[name='object_request_value_new']").eq(i).val(),
+        }
+    }
+    for(var i=0;i<$("input[name='object_response_name_new']").length;i++){
+        PostData['object_response'][i]    = {
+            'name'   :    $("input[name='object_response_name_new']").eq(i).val(),
+            'value'  :    $("input[name='object_response_value_new']").eq(i).val(),
+        }
+    }
+    
     $.post('api.php?act=save_object',{"data":PostData},function(Run){
         if( Run.status==true&&Run.object_id!="" ){
             $("#ObjHeadTbody").empty();
@@ -736,13 +817,29 @@ function edit_object(){
     $("input[name='object_name_new']").val(Row['object_name']);
     $("input[name='object_host_new']").val(Row['object_host']);
     $("textarea[name='object_exp_new']").val(Row['object_exp']);
-    $("#ObjHeadTbody").empty();
     
-    if( Row['object_header'].length==undefined ){
+    //修改HEAD
+    $("#ObjHeadTbody").empty();
+    if( typeof Row['object_header']=="object" && Row['object_header'].length==undefined ){
         objhead_newtr(Row['object_header']);
+    }
+    
+    //修改Request
+    $("#ObjRequTbody").empty();
+    if( typeof Row['object_request']=="object" && Row['object_request'].length==undefined ){
+        objrequ_newtr(Row['object_request']);
+    }
+    
+    //修改Response
+    $("#ObjRespTbody").empty();
+    if( typeof Row['object_response']=="object" && Row['object_response'].length==undefined ){
+        objresp_newtr(Row['object_response']);
     }
 }
 
+/**
+ * 
+ */
 function del_object(){
     //离线版不允许操作
     if( !ExistsLine() ){return;}
@@ -860,15 +957,58 @@ function objhead_newtr(Row){
     var TPL     = HTMLTPL['ObjHeadTbody'];
     
     if( typeof Row=="object"&&Row.length==undefined ){
-        TPL     = $(HTMLTPL['ObjHeadTbody']);
-        
         for(var i in Row){
-            if( i!=undefined ) TPL.find("input[name='object_header_name_new']").val(i);
-            if( Row[i]!=undefined ) TPL.find("input[name='object_header_value_new']").val(Row[i]);
+            var TPLN     = $(TPL);
+            if( i!=undefined ) TPLN.find("input[name='object_header_name_new']").val(i);
+            if( Row[i]!=undefined ) TPLN.find("input[name='object_header_value_new']").val(Row[i]);
+            $("#ObjHeadTbody").append( TPLN );
         }
+    }else{
+        $("#ObjHeadTbody").append( TPL );
     }
-    $("#ObjHeadTbody").append( TPL );
+    
 }
+/**
+ * 增加一行默认request
+ */
+function objrequ_newtr(Row){
+    if( $("input[name='object_request_name']").length>5 ){return;}
+    
+    var TPL     = HTMLTPL['ObjRequTbody'];
+    
+    if( typeof Row=="object"&&Row.length==undefined ){
+        for(var i in Row){
+            var TPLN     = $(TPL);
+            if( i!=undefined )  TPLN.find("input[name='object_request_name_new']").val(i);
+            if( Row[i]!=undefined ) TPLN.find("input[name='object_request_value_new']").val(Row[i]);
+            $("#ObjRequTbody").append( TPLN );
+        }
+    }else{
+        $("#ObjRequTbody").append( TPL );
+    }
+    
+}
+/**
+ * 增加一行默认的response
+ * @param {Object} Row
+ */
+function objresp_newtr(Row){
+    if( $("input[name='object_response_name']").length>5 ){return;}
+    
+    var TPL     = HTMLTPL['ObjRespTbody'];
+    if( typeof Row=="object"&&Row.length==undefined ){
+        for(var i in Row){
+            var TPLN     = $(TPL);
+            if( i!=undefined ) TPLN.find("input[name='object_response_name_new']").val(i);
+            if( Row[i]!=undefined ) TPLN.find("input[name='object_response_value_new']").val(Row[i]);
+            $("#ObjRespTbody").append( TPLN );
+        }
+    }else{
+        $("#ObjRespTbody").append( TPL );
+    }
+}
+
+
 function eve_newtr(){
     $("#EveTbody").append( HTMLTPL['EveTbody'] );
 }
@@ -917,8 +1057,8 @@ function resp_newtr(Row){
         if( Row['exp']!=undefined ) TPL.find("input[name='new_apiresponse_exp']").val(Row["exp"]);
         
         if( Row['left']!=undefined&&Row['left']!='undefined' ){
-        	TPL.find("input[name='new_apiresponse_left']").val(Row['left']);
-        	TPL.find("span[name='left_int']").text( Row['left'] );
+        	TPL.find("input[name='resp_left_val']").val(Row['left']);
+        	TPL.find("span[name='resp_left_int']").text( Row['left'] );
         }
         
         if( Row['name']!=undefined && Row["empty"]=='true'||Row["empty"]==true ){
@@ -933,34 +1073,34 @@ function resp_newtr(Row){
 
 function resp_newchilds(Ths,Act){
 	var ThsDom  = $(Ths).parent().parent();
-	var ThsID	= ThsDom.find("span[name='left_int']").text();
+	var ThsID	= ThsDom.find("span[name='resp_left_int']").text();
         
 	if( Act=="-" ){
 		ThsDom.remove();
 	}
 	if( Act=="+" ){
 		var TPL     = $(HTMLTPL['RespTbody']);
-		TPL.find("span[name='left_int']").text( ThsID );
-		TPL.find("input[name='new_apiresponse_left']").val( ThsID );
+		TPL.find("span[name='resp_left_int']").text( ThsID );
+		TPL.find("input[name='resp_left_val']").val( ThsID );
 		ThsDom.after(TPL);
 	}
 	if( Act=="-+" ){
 		var TPL     = $(HTMLTPL['RespTbody']);
-		TPL.find("span[name='left_int']").text( ThsID+'-' );
-		TPL.find("input[name='new_apiresponse_left']").val( ThsID+'-' );
+		TPL.find("span[name='resp_left_int']").text( ThsID+'-' );
+		TPL.find("input[name='resp_left_val']").val( ThsID+'-' );
 		ThsDom.after(TPL);
 	}
 	//移动到上级
 	if( Act=="<" ){
 	    ThsID = ThsID.substr(1);
-	    ThsDom.find("span[name='left_int']").text( ThsID );
-	    ThsDom.find("input[name='new_apiresponse_left']").val( ThsID );
+	    ThsDom.find("span[name='resp_left_int']").text( ThsID );
+	    ThsDom.find("input[name='resp_left_val']").val( ThsID );
 	}
 	//移动到下级
 	if( Act==">" ){
         ThsID = ThsID+'-';
-        ThsDom.find("span[name='left_int']").text( ThsID );
-        ThsDom.find("input[name='new_apiresponse_left']").val( ThsID );
+        ThsDom.find("span[name='resp_left_int']").text( ThsID );
+        ThsDom.find("input[name='resp_left_val']").val( ThsID );
     }
 	//上下移动
 	if( Act=='^' ){
@@ -969,8 +1109,8 @@ function resp_newchilds(Ths,Act){
 	    //先添加下级节点
 	    var TPLA       = $(HTMLTPL['RespTbody']);
 	    ThsID          = $(TopDomInp[0]).val();
-        TPLA.find("span[name='left_int']").text( ThsID );
-        TPLA.find("input[name='new_apiresponse_left']").val( ThsID );
+        TPLA.find("span[name='resp_left_int']").text( ThsID );
+        TPLA.find("input[name='resp_left_val']").val( ThsID );
         for(i=0;i<TopDomInp.length;i++){
             TPLA.find("input").eq(i).val( $(TopDomInp[i]).val() );
         }
@@ -996,7 +1136,7 @@ function resp_newchilds(Ths,Act){
 	        //如果是最后一个元素，则跳出
 	        if( NextDom.length<=0||NextDom.html()==undefined )break;
 	        
-	        NextID         = NextDom.find("span[name='left_int']").text();
+	        NextID         = NextDom.find("span[name='resp_left_int']").text();
 	        //如果等级高于当前,则跳出
 	        if( NextID.length<=ThsID.length )break;
 	        
@@ -1011,8 +1151,8 @@ function resp_newchilds(Ths,Act){
 	    for(var i=0;i<NewInp.length;i++){
 	        NextID     = NewInp[i][0];
 	        var TPL    = $(HTMLTPL['RespTbody']);
-            TPL.find("span[name='left_int']").text( NextID );
-            TPL.find("input[name='new_apiresponse_left']").val( NextID );
+            TPL.find("span[name='resp_left_int']").text( NextID );
+            TPL.find("input[name='resp_left_val']").val( NextID );
             for(var ii=0; ii<NewInp[i].length; ii++){
                 TPL.find("input").eq(ii).val( NewInp[i][ii] );
             }
@@ -1092,6 +1232,8 @@ function FunShowObjectInfo(SeleID){
             $("[name='object_exp']").text( Dom['object_exp'] );
             $("[name='object_host']").text( Dom['object_host'] );
             $("[name='object_header']").text( JSON.stringify(Dom['object_header']) );
+            $("[name='object_request']").text( JSON.stringify(Dom['object_request']) );
+            $("[name='object_response']").text( JSON.stringify(Dom['object_response']) );
             document.title = Dom['object_name']+"-Adoc自动接口工具";
         }
     }
@@ -1246,6 +1388,37 @@ function FunShowApiAll(ObjectId){
     }
 }
 
+/**
+ * 自动规整对象下级属性
+ */
+function FunAutoLeft(Tag){
+    var RowInt      = $("[name='"+Tag+"_left_int']");
+    var RowVal      = $("[name='"+Tag+"_left_val']");
+    
+    var LeftInt     = '';
+    
+    for(var i=0;i<RowVal.length;i++){
+        
+        var TrVal   = $(RowVal[i]).val();
+        var TrMin   = TrVal.length - LeftInt.length;
+        
+        if(  TrMin > 1 ){
+            for(var ii=i;ii<RowVal.length;ii++){
+                var TrrVal  = $(RowVal[ii]).val();
+                if( TrrVal.length>=TrVal.length ){
+                    var TrrID   = TrrVal.substr( TrMin-1 );
+                    $(RowInt[ii]).text( TrrID );
+                    $(RowVal[ii]).val( TrrID );
+                }
+            }
+            FunAutoLeft(Tag);
+            return ;
+        }
+        
+        LeftInt = TrVal;
+    }
+}
+
 
 /**
  * 是否允许在线操作
@@ -1274,6 +1447,8 @@ $(document).ready(function(){
     HTMLTPL['RequTbody']    = $("#RequTbody").html();
     HTMLTPL['RespTbody']    = $("#RespTbody").html();
     HTMLTPL['ObjHeadTbody'] = $("#ObjHeadTbody").html();
+    HTMLTPL['ObjRequTbody'] = $("#ObjRequTbody").html();
+    HTMLTPL['ObjRespTbody'] = $("#ObjRespTbody").html();
     HTMLTPL['ApiListTbody'] = $("#ApiListTbody").html();
     HTMLTPL['ApiTabTbodyHeader']    = $("#ApiTabTbodyHeader").html();
     HTMLTPL['ApiTabTbodyRequest']   = $("#ApiTabTbodyRequest").html();
