@@ -470,19 +470,19 @@ select{
 	                    <td width="30%;"><input name="new_apiresponse_value" value="" placeholder="值" /></td>
 	                    <td width="30%;"><input name="new_apiresponse_exp" value="" placeholder="说明" /></td>
 	                    <td width="5%;">
-	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">✚</span>
-	                    	<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-')" title="移除当前元素">✖</span>
-	                    	<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'^')" title="上移元素">▲</span>]
-	                    	[<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">↩</span>
-	                    	<span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'c')" title="复制本级元素与下级元素">❒</span>]
+	                    	[<span name="but_resp_add" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">✚</span>
+	                    	<span name="but_resp_rm" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-')" title="移除当前元素">✖</span>
+	                    	<span name="but_resp_up" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'^')" title="上移元素">▲</span>]
+	                    	[<span name="but_resp_dadd" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">↩</span>
+	                    	<span name="but_resp_copy" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'c')" title="复制本级元素与下级元素">❒</span>]
 	                    </td>
 	                </tr>
                 </tbody>
                 <tr>
                     <th colspan="4" style="background-color:#FFF; height: 50px;">
-                        <span class="cbut" onclick="save_api(true)">+ 保存继续</span>
-                        <span class="dbut" onclick="save_api()">+ 保存关闭</span>
-                        <span class="ebut" onclick="save_api_esc();">- 取消</span>
+                        <span name="but_apisave_continue" class="cbut" onclick="save_api(true)">+ 保存继续</span>
+                        <span name="but_apisave_close" class="dbut" onclick="save_api()">+ 保存关闭</span>
+                        <span name="but_apiesc" class="ebut" onclick="save_api_esc();">- 取消</span>
                     </th>
                 </tr>
             </table>
@@ -667,6 +667,7 @@ function show_apitab(){
             resp_newtr(Row);
         }
     }
+    
 }
 
 
@@ -1419,6 +1420,33 @@ function FunAutoLeft(Tag){
     }
 }
 
+function FunKeyTab(Key){
+    var ThsDom = $(document.activeElement);
+    
+    window.console.log(Key.keyCode);
+    
+    //设定如果是最后一个EXP则添加一个新的行
+    if( Key.keyCode==9 ){
+        var Inp = $("input[name='new_apiresponse_exp']");
+        var Max = Inp.length - 1;
+        if( ThsDom[0]==Inp[Max] ){
+            $("[name='but_resp_add']").eq(Max).click();
+            window.console.log(true);
+        }
+    }
+    
+    //设定Ctrl+S为保存继续
+    if( Key.keyCode==83&&Key.ctrlKey==true ){
+        $("[name='but_apisave_continue']").eq(0).click();
+        return false;
+    }
+    
+    //ESC关闭当前对话框
+    if( Key.keyCode==27 ){
+        $("[name='but_apiesc']").click();
+    }
+    
+}
 
 /**
  * 是否允许在线操作
@@ -1474,6 +1502,17 @@ $(document).ready(function(){
             clearInterval(TimeDom);
         }
     },100);
+    
+    
+    $("#mask_api").bind('keydown',function(event){return FunKeyTab(event)});
+    
+    $(document).bind('keydown',function(event){
+        console.log(event.keyCode);
+        if( event.keyCode==78 ){
+            $("#but_addapi").click();
+            return;
+        }
+    });
     
 });
 </script>
