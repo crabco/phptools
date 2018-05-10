@@ -249,10 +249,14 @@ function run(){
         
         $ApiAll                    = ApiRowToJson($ApiAll);
         
+        $SelfURL                   = "http://".$_SERVER['HTTP_HOST']."/".$_SERVER['REQUEST_URI'];
+        $SelfURL                   = preg_replace('/api.php[^\r]+/i','index.html',$SelfURL);
+        
         $FileName                  = $Object[$ObjectID]['object_name']."-".date("Y年m月d日")."版本";
         $HTML                      = preg_replace('/LocalObject[ ]+\=[ ]+null;/i', "LocalObject = " . json_encode($Object), $HTML);
         $HTML                      = preg_replace('/LocalApiRow[ ]+\=[ ]+null;/i', "LocalApiRow = " . json_encode($ApiAll), $HTML);
         $HTML                      = preg_replace('/\<title\>[^<]+/i', "<title>{$FileName}", $HTML);
+        $HTML                      = str_replace('https://github.com/crabco/phptools',$SelfURL,$HTML);
         
         header('Content-Type:text/html');
         header('Content-Disposition: attachment; filename="'.$FileName.'.html"');

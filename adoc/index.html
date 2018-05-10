@@ -15,6 +15,19 @@ body {
     margin-right: 0px;
     margin-bottom: 0px;
 }
+.LeftApiTab{
+	height:600px;
+	overflow-y: auto;
+}
+.LeftApiTr{
+	font-size: 12px;
+	line-height: 25px;
+	margin-bottom: 5px;
+}
+.LeftApiTrHover{
+	color:#B3318B;
+	font-weight: bold;
+}
 .dtrt {
     height: 28px;
     font-size: 14px;
@@ -464,8 +477,8 @@ select{
                                 <span name="resp_left_int"></span>
                                 <input name="resp_left_val" type="hidden" value=""/>
                                 <input name="new_apiresponse_name" style="width:50%;" value="" placeholder="KeyName" />&nbsp;
-                                <span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'<')" title="向上移动层级">◀</span>
-                                <span class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'>')" title="向下移动层级">▶</span>
+                                <span name="but_move_l" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'<')" title="向上移动层级">◀</span>
+                                <span name="but_move_r" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'>')" title="向下移动层级">▶</span>
                             </td>
 	                    <td width="30%;"><input name="new_apiresponse_value" value="" placeholder="值" /></td>
 	                    <td width="30%;"><input name="new_apiresponse_exp" value="" placeholder="说明" /></td>
@@ -517,9 +530,14 @@ select{
             <div style="margin-top:1px;"></div>
             <span class="dspanExp" name="object_host"></span>
             <div style="margin-top:20px;"></div>
+            
             <span class="dspan">接口定义</span>
-            <div id="ApiListTbody">
-                <span name="api_left_list" id="left_{api_id}" class="dspanName" onclick="api_select('{api_id}')" style="cursor: pointer;"><span class="bg{api_type}"></span>{api_name}&nbsp;&nbsp;<span class="iedit" title="修改接口" onclick="edit_api('{api_id}')"></span><span class="idel" title="删除接口" onclick="del_api('{api_id}')"></span></span>
+            <div id="ApiListTbody" class="LeftApiTab">
+                <div class="LeftApiTr" name="api_left_list" id="left_{api_id}" onclick="api_select('{api_id}')" style="cursor: pointer;">
+                	<span class="bg{api_type}"></span>
+                	{api_name}&nbsp;&nbsp;<span class="iedit" title="修改接口" onclick="edit_api('{api_id}')"></span>
+                	<span class="idel" title="删除接口" onclick="del_api('{api_id}')"></span>
+                </div>
             </div>
             <div style="margin-top:10px;"></div>
             <span class="dspan">对象定义</span>
@@ -943,9 +961,9 @@ function esc_object(){
 }
 
 function api_select(api_id){
-    $("span[name='api_left_list']").attr("class","dspanName");
-	$("#left_"+api_id).attr("class",'dspanName dspanNames');
-	$("html,body").animate({scrollTop:$("div[api_id='"+api_id+"']").offset().top},500);
+    $("div[name='api_left_list']").attr("class","LeftApiTr");
+	$("#left_"+api_id).attr("class",'LeftApiTr LeftApiTrHover');
+	$("html,body").animate({scrollTop:$("div[api_id='"+api_id+"']").offset().top-50},500);
 }
 
 /**
@@ -1490,6 +1508,29 @@ $(document).ready(function(){
                 $("[name='but_resp_add']").eq(Max).click();
             }
         }
+        //ALT+→下移层级
+        if( Key.altKey==true && Key.keyCode==39 && ThsDom[0].name=="new_apiresponse_name" ){
+        	var Inp = $("input[name='new_apiresponse_name']");
+        	for(var i=0;i<Inp.length;i++){
+        		if( ThsDom[0]==Inp[i] ){
+        			$("[name='but_move_r']").eq(i).click();
+        			ThsDom.focus();
+        			break;
+        		}
+        	}
+        }
+        //ALT+←上一层及
+        if( Key.altKey==true && Key.keyCode==37 && ThsDom[0].name=="new_apiresponse_name" ){
+        	var Inp = $("input[name='new_apiresponse_name']");
+        	for(var i=0;i<Inp.length;i++){
+        		if( ThsDom[0]==Inp[i] ){
+        			$("[name='but_move_l']").eq(i).click();
+        			ThsDom.focus();
+        			return false;
+        			break;
+        		}
+        	}
+        }
         //如果是最后一个EXP并且敲入回车则保存关闭
         if( Key.keyCode==13 ){
             var Inp = $("input[name='new_apiresponse_exp']");
@@ -1498,19 +1539,18 @@ $(document).ready(function(){
                 $("[name='but_apisave_close']").eq(0).click();
             }
         }
-        
         //设定Ctrl+S为保存继续
         if( Key.keyCode==83&&Key.ctrlKey==true ){
             $("[name='but_apisave_continue']").eq(0).click();
             return false;
         }
-        
         //ESC关闭当前对话框
         if( Key.keyCode==27 ){
             $("[name='but_apiesc']").click();
         }
     });
     
+    //监听ALT+N 按钮打开新增接口对话框
     $(document).bind('keydown',function(event){
         console.log(event.keyCode);
         if( event.keyCode==78 && event.altKey==true && $("#mask_api").is(":hidden") ){
