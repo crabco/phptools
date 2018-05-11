@@ -19,6 +19,9 @@ body {
 	height:600px;
 	overflow-y: auto;
 }
+.but{
+	cursor: pointer;
+}
 .LeftApiTr{
 	font-size: 12px;
 	line-height: 25px;
@@ -454,7 +457,11 @@ select{
                     <td style="text-align: center"><input name="new_apiheader_name" value="" placeholder="KeyName" /></td>
                     <td><input name="new_apiheader_value" value="" placeholder="值" /></td>
                     <td><input name="new_apiheader_exp" value="" placeholder="说明" /></td>
-                    <td><input name="new_apiheader_empty" type="checkbox" style="width:40px;min-width: 0px;" value="true"/></td>
+                    <td>
+                    	<input name="new_apiheader_empty" type="checkbox" style="width:15px;min-width: 0px;" value="true"/>
+                    	<span name="but_head_add" class="dspanExp but" onclick="head_newchilds(this,'+')" title="新增一个同级元素">✚</span>
+                    	<span name="but_requ_rm" class="dspanExp but" onclick="head_newchilds(this,'-')" title="移除当前元素">✖</span>
+                    </td>
                 </tr>
                 </tbody>
                 <tr>
@@ -465,7 +472,11 @@ select{
                     <td style="text-align: center;"><input name="new_apirequest_name" value="" placeholder="KeyName" /></td>
                     <td><input name="new_apirequest_value" value="" placeholder="值" /></td>
                     <td><input name="new_apirequest_exp" value="" placeholder="说明" /></td>
-                    <td><input name="new_apirequest_empty" type="checkbox" style="width:40px;min-width: 0px;"/></td>
+                    <td>
+                    	<input name="new_apirequest_empty" type="checkbox" style="width:15px;min-width: 0px;"/>
+                    	<span name="but_requ_add" class="dspanExp but" onclick="requ_newchilds(this,'+')" title="新增一个同级元素">✚</span>
+                    	<span name="but_requ_rm" class="dspanExp but" onclick="requ_newchilds(this,'-')" title="移除当前元素">✖</span>
+                    </td>
                 </tr>
                 </tbody>
                 <tr>
@@ -477,17 +488,17 @@ select{
                                 <span name="resp_left_int"></span>
                                 <input name="resp_left_val" type="hidden" value=""/>
                                 <input name="new_apiresponse_name" style="width:50%;" value="" placeholder="KeyName" />&nbsp;
-                                <span name="but_move_l" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'<')" title="向上移动层级">◀</span>
-                                <span name="but_move_r" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'>')" title="向下移动层级">▶</span>
+                                <span name="but_move_l" class="dspanExp but" onclick="resp_newchilds(this,'<')" title="向上移动层级">◀</span>
+                                <span name="but_move_r" class="dspanExp but" onclick="resp_newchilds(this,'>')" title="向下移动层级">▶</span>
                             </td>
 	                    <td width="30%;"><input name="new_apiresponse_value" value="" placeholder="值" /></td>
 	                    <td width="30%;"><input name="new_apiresponse_exp" value="" placeholder="说明" /></td>
 	                    <td width="5%;">
-	                    	[<span name="but_resp_add" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">✚</span>
-	                    	<span name="but_resp_rm" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-')" title="移除当前元素">✖</span>
-	                    	<span name="but_resp_up" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'^')" title="上移元素">▲</span>]
-	                    	[<span name="but_resp_dadd" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">↩</span>
-	                    	<span name="but_resp_copy" class="dspanExp" style="cursor: pointer;" onclick="resp_newchilds(this,'c')" title="复制本级元素与下级元素">❒</span>]
+	                    	[<span name="but_resp_add" class="dspanExp but" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">✚</span>
+	                    	<span name="but_resp_rm" class="dspanExp but" onclick="resp_newchilds(this,'-')" title="移除当前元素">✖</span>
+	                    	<span name="but_resp_up" class="dspanExp but" onclick="resp_newchilds(this,'^')" title="上移元素">▲</span>]
+	                    	[<span name="but_resp_dadd" class="dspanExp but" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">↩</span>
+	                    	<span name="but_resp_copy" class="dspanExp but" onclick="resp_newchilds(this,'c')" title="复制本级元素与下级元素">❒</span>]
 	                    </td>
 	                </tr>
                 </tbody>
@@ -615,7 +626,7 @@ select{
                 </table>
                 
                 <div class="dspan ApiJson">
-                	<div id="ApiTabTbodyJson">{api_response_json}</div>
+                	<div name="ApiTabTbodyJson">{api_response_json}</div>
                 </div>
                 
             </div>
@@ -1180,6 +1191,35 @@ function resp_newchilds(Ths,Act){
 	}
 }
 
+function requ_newchilds(Ths,Act){
+	var ThsDom  = $(Ths).parent().parent();
+//	var ThsID	= ThsDom.find("span[name='resp_left_int']").text();
+        
+	if( Act=="-" ){
+		ThsDom.remove();
+	}
+	if( Act=="+" ){
+		var TPL     = $(HTMLTPL['RequTbody']);
+//		TPL.find("span[name='resp_left_int']").text( ThsID );
+//		TPL.find("input[name='resp_left_val']").val( ThsID );
+		ThsDom.after(TPL);
+	}
+}
+
+function head_newchilds(Ths,Act){
+	var ThsDom  = $(Ths).parent().parent();
+//	var ThsID	= ThsDom.find("span[name='resp_left_int']").text();
+    
+	if( Act=="-" ){
+		ThsDom.remove();
+	}
+	if( Act=="+" ){
+		var TPL     = $(HTMLTPL['HeadTbody']);
+//		TPL.find("span[name='resp_left_int']").text( ThsID );
+//		TPL.find("input[name='resp_left_val']").val( ThsID );
+		ThsDom.after(TPL);
+	}
+}
 
 
 /**
@@ -1502,12 +1542,38 @@ $(document).ready(function(){
         
         //设定如果是最后一个EXP则添加一个新的行
         if( Key.keyCode==9 ){
-            var Inp = $("input[name='new_apiresponse_exp']");
-            var Max = Inp.length - 1;
-            if( ThsDom[0]==Inp[Max] ){
-                $("[name='but_resp_add']").eq(Max).click();
+        	
+        	if( ThsDom[0].name=="new_apiresponse_exp" ){
+	            var Inp = $("input[name='new_apiresponse_exp']");
+	            var Max = Inp.length - 1;
+	            if( ThsDom[0]==Inp[Max] ){
+	                $("[name='but_resp_add']").eq(Max).click();
+	            }
+            }
+        	
+	        if( ThsDom[0].name=="new_apirequest_exp" ){
+	            //request
+	            var Inp = $("input[name='new_apirequest_exp']");
+	            var Max = Inp.length - 1;
+	            
+	            if( ThsDom[0]==Inp[Max] ){
+	                $("[name='but_requ_add']").eq(Max).click();
+	            }
+            }
+	        
+            if( ThsDom[0].name=="new_apiheader_exp" ){
+            	//header
+	            var Inp = $("input[name='new_apiheader_exp']");
+	            var Max = Inp.length - 1;
+	            
+	            if( ThsDom[0]==Inp[Max] ){
+	                $("[name='but_head_add']").eq(Max).click();
+	            }
             }
         }
+        
+        
+        
         //ALT+→下移层级
         if( Key.altKey==true && Key.keyCode==39 && ThsDom[0].name=="new_apiresponse_name" ){
         	var Inp = $("input[name='new_apiresponse_name']");
