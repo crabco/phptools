@@ -385,6 +385,28 @@ select{
                 </tr>
             </table>
         </div>
+        
+        <div id="mask_login" class="mk" style="display:none;">
+            <div class="dtr">
+                <span class="dspan">登录管理</span>
+                <span class="dspan" style="float:right;"></span>
+            </div>
+            <div style="margin-top:20px;"></div>
+            <div style="margin-top:10px;">
+                <table width="100%" >
+                    <tr>
+                        <td><input name="login_pass" value="" style="width:300px;" placeholder="请输入登录密码!"/></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="margin-top:20px;">
+                <span class="dspan">
+                    <span class="dbut" onclick="login_sub()">登录</span>
+                </span>
+            </div>
+            <div style="margin-top:20px;"></div>
+            <div id="login_error" style="color:#ff1100"></div>
+        </div>
 
         <div id="mask_event" class="mk" style="display:none;">
             <div class="dtr">
@@ -699,15 +721,71 @@ function show_apitab(){
     
 }
 
+function login_show(){
+    //离线版不允许操作
+    if( !ExistsLine() ){return;}
+    
+    $('#mask').show();
+    $('#mask_login').show();
+}
+
+//判断是否登录
+function login_exists(){
+    //如果是离线版,则不跳出登录框
+    if( !ExistsLine() ){
+        return true;
+    }
+    
+    var Login 		= sessionStorage.getItem("login_status");
+    
+    if( Login!=true&&Login!='true' ){
+    	
+        $.get("api.php?act=login_exists",function(Json){
+        	
+        	if( Json['status']==true ){
+        		sessionStorage.setItem("login_status",true);
+        		window.location.reload();
+        	}else{
+        		login_show();
+        	}
+	    },"json");
+        return false;
+    }else{
+        return true;
+    }
+}
+
+function login_sub(){
+	if( $("input[name='login_pass']").val()=="" ){
+		$("#login_error").html('请输入密码');
+		return false;
+	}
+	var Pass	= $("input[name='login_pass']").val();
+	$.get("api.php?act=login&pass="+Pass,function(Json){
+    	if( Json['status']==true ){
+    		sessionStorage.setItem("login_status",true);
+    		document.cookie="token="+Json['token'];
+    		
+		    var exp = new Date();
+		    exp.setTime(exp.getTime() + 86400 * 1000 * 365);//过期时间 2分钟  
+		    document.cookie="token="+Json['token']+";expires=" + exp.toGMTString(); 
+    		window.location.reload();
+    		
+    	}else{
+    		$("#login_error").html( Json['error'] );
+    	}
+    },"json");
+}
+
 
 function show_objecttab(){
     //离线版不允许操作
     if( !ExistsLine() ){return;}
     
-	$('#mask').show();
-	$('#mask_object').show();
-	
-	$("input[name='object_id_new']").val("");
+    $('#mask').show();
+    $('#mask_object').show();
+
+    $("input[name='object_id_new']").val("");
     $("input[name='object_name_new']").val("");
     $("input[name='object_host_new']").val("");
     $("textarea[name='object_exp_new']").val("");
@@ -880,6 +958,12 @@ function del_object(){
     
     if( confirm('确认删除该项目么?如果删除项目，该项目下的所有接口将被删除!') ){
         $.get("api.php?act=del_object&oid="+object_id,function(Json){
+        	
+        	if( Json['status']!=true&&Json['error']=="尚未登录" ){
+        		login_show();
+        		return false;
+        	}
+        	
             if( Json['status']!=true ){
                 alert(Json['error']);
             }else{
@@ -905,6 +989,11 @@ function edit_api(api_id){
     ObjectId    = $("#object_id").val();
     
     $.get("api.php?act=show_api&oid="+ObjectId+"&api_id="+api_id,function(Json){
+        
+        if( Json['status']!=true&&Json['error']=="尚未登录" ){
+    		login_show();
+    		return false;
+    	}
         
         if( Json['status']!=true ){
             alert(Json['error']);
@@ -955,6 +1044,12 @@ function del_api(api_id){
     ObjectId    = $("#object_id").val();
     if( confirm('确认删除该接口么?') ){
         $.get("api.php?act=del_api&oid="+ObjectId+"&api_id="+api_id,function(Json){
+        	
+        	if( Json['status']!=true&&Json['error']=="尚未登录" ){
+        		login_show();
+        		return false;
+        	}
+        	
             if( Json['status']!=true ){
                 alert(Json['error']);
             }else{
@@ -1267,6 +1362,12 @@ function FunShowObjectList(ObjId){
         seccuss(LocalObject);
     }else{
         $.get("api.php?act=show_object",function(Json){
+        	
+        	if( Json['status']!=true&&Json['error']=="尚未登录" ){
+        		login_show();
+        		return false;
+        	}
+        	
             if( Json['status']!=true ){
                 alert('获取失败');
             }else{
@@ -1438,6 +1539,13 @@ function FunShowApiAll(ObjectId){
         seccuss(LocalApiRow);
     }else{
         $.get("api.php?act=show_api&oid="+ObjectId,function(Json){
+        	
+        	if( Json['status']!=true&&Json['error']=="尚未登录" ){
+        		login_show();
+        		return false;
+        	}
+        	
+        	
             if( Json['status']!=true ){
                 alert(Json['error']);
             }else{
@@ -1493,7 +1601,7 @@ function ExistsLine(){
 }
 
 $(document).ready(function(){
-	$("#but_addapi").hide();
+    $("#but_addapi").hide();
     $("#but_adddom").hide();
     
     window.HTMLTPL  = [];
@@ -1518,6 +1626,10 @@ $(document).ready(function(){
     
     $("#ApiListTbody").empty();
     $("#ApiTabTbody").empty();
+    
+    if( login_exists()==false ){
+        return false;
+    }
     
     if( !ExistsLine() ){$("#version_tab").html( $("#version_tab").text()+" -- 离线版,<a href='https://github.com/crabco/phptools'>访问在线版本</a>" );}
     
@@ -1549,7 +1661,7 @@ $(document).ready(function(){
 	            if( ThsDom[0]==Inp[Max] ){
 	                $("[name='but_resp_add']").eq(Max).click();
 	            }
-            }
+                }
         	
 	        if( ThsDom[0].name=="new_apirequest_exp" ){
 	            //request

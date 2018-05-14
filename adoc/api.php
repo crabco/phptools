@@ -1,4 +1,9 @@
 <?php
+//配置登录密码,如果为空则不需要登录
+define('ToolsLoginPass', '123456');
+
+
+
 if( !empty($_GET['debug']) ){
     error_reporting(0);
 }
@@ -8,6 +13,31 @@ define('ObjectListName', "object_list");
 function run(){
     $Run        = ['status'=>false,'error'=>'接口尚未支持'];
     $Act        = strtolower($_GET['act']);
+    
+    /**
+     * 登录
+     */
+    if( $Act=='login' ){
+        $PassWord   = $_GET['pass'];
+        if( !ExistsPass($PassWord) ){
+            return ['status'=>false,'error'=>'密码不正确'];
+        }else{
+            return ['status'=>true,'error'=>'','token'=>$PassWord];
+        }
+    }
+    
+    /**
+     * 判断是否登录
+     */
+    $Token      = ( empty($_COOKIE['token']) )? "" : $_COOKIE['token'];
+    if( !ExistsToken($Token) ){
+        return ['status'=>false,'error'=>'尚未登录'];
+    }
+    
+    if( $Act=='login_exists' ){
+        return ['status'=>true,'error'=>''];
+    }
+    
     
     /**
      * 获取项目列表信息
@@ -408,6 +438,41 @@ function ApiRowToJson($Response){
     }
     return $Response;
 }
+
+function ExistsPass( &$Pass ){
+    if( empty(ToolsLoginPass) ){
+        return true;
+    }else{
+        if( sha1(ToolsLoginPass)!=sha1($Pass) ){
+            return false;
+        }else{
+            $Sale   = rand(1000,9999);
+            $Pass   = md5($Sale.ToolsLoginPass.$Sale).$Sale;
+            return true;
+        }
+    }
+}
+
+function ExistsToken($Token){
+    
+    if( defined(ToolsLoginPass)||empty(ToolsLoginPass) ){
+        return true;
+    }
+    
+    if( !preg_match('/^[a-z0-9]{20,60}$/i', $Token) ){
+        return false;
+    }
+    
+    $Sale       = substr($Token,-4);
+    $Pass       = md5($Sale.ToolsLoginPass.$Sale).$Sale;
+    
+    if( $Pass!=$Token ){
+        return false;
+    }else{
+        return true;
+    }
+}
+
 
 /**
  * 输出
