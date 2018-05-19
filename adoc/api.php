@@ -267,22 +267,94 @@ function run(){
             return ['status'=>false,'error'=>'项目非法'];
         }
         
+        //开始备份
         copy(ObjectListName.".json",ObjectListName.date("-YmdHis").".json");
         copy($ObjectID.".json",$ObjectID.date("-YmdHis").".json");
+        
+        $ObjectAll                 = get_object();
+        $ObjectInfo                = $ObjectAll[$ObjectID];
+        $ApiAll                    = get_json($ObjectID);
+        $ApiAll                    = ApiRowToJson($ApiAll);
+        
+        
+        if( $_GET['type']=="word" ){
+            
+            $Word                   = "";
+            $Word                  .= "<div style='text-align:center;font-family: 微软雅黑;'>{$ObjectInfo['object_name']}</div>";
+            $Word                  .= "<div style='text-align:center;margin-bottom:10em;'>".date("Y年m月d日")."版本</div>";
+            $Word                  .= "<div style='text-indent:;'>{$ObjectInfo["object_exp"]}</div>";
+            $Word                  .= "<h1 style='text-indent:;'>1、 预定义数据</h1>";
+            $Word                  .= "<h2 style='text-indent:;'>1.1、接口地址：</h2>";
+            $Word                  .= "<div style='text-indent: 3em;'>{$ObjectInfo["object_host"]}</div>";
+            
+            if( !empty($ObjectInfo['object_header']) ){
+                $Word              .= "<h2 style='text-indent:;'>1.2、预定义header：</h2>";
+                $Word              .= "<div style='margin-left: 3em;background-color:#ececec;padding: 5px;border-radius: 5px;'>".json_encode($ObjectInfo['object_header'],JSON_UNESCAPED_UNICODE)."</div>";
+            }
+            
+            if( !empty($ObjectInfo['object_request']) ){
+                $Word              .= "<h2 style='text-indent:;'>1.3、预定义Request：</h2>";
+                $Word              .= "<div style='margin-left: 3em;background-color:#ececec;padding: 5px;border-radius: 5px;'>".json_encode($ObjectInfo['object_request'],JSON_UNESCAPED_UNICODE)."</div>";
+            }
+            
+            
+            if( !empty($ObjectInfo['object_response']) ){
+                $Word              .= "<h2 style='text-indent:;'>1.4、预定义Response：</h2>";
+                $Word              .= "<div style='margin-left: 3em;background-color:#ececec;padding: 5px;border-radius: 5px;'>".json_encode($ObjectInfo['object_response'],JSON_UNESCAPED_UNICODE)."</div>";
+            }
+            
+            if( !empty($ApiAll) ){
+                $Word              .= "<h1 style='text-indent:;'>2、接口定义</h1>";
+                $i                  = 1;
+                foreach($ApiAll as $vs=>$rs){
+                    $Word          .= "<h2 style='text-indent:;'>2.{$i}、{$rs["api_name"]}</h2>";
+                    $apiurl         = ( preg_match('/^http\:\/\//i', $rs['api_url']) )? $rs['api_url'] : $ObjectInfo['object_host'].$rs['api_url'];
+                    $Word          .= "<div style='margin-left: 3em;'>{$rs['api_exp']}</div>";
+                    $Word          .= "<div style='margin-left: 3em;background-color:#ececec;padding: 5px;border-radius: 5px;margin-top:10px;'>接口地址: {$apiurl}</div>";
+                    $Word          .= "<div style='margin-left: 3em;margin-top:10px;'>请求方式: <b>".strtoupper($rs['api_type'])."</b></div>";
+                    
+                    if( !empty($rs['api_header']) ){
+                        $Word              .= "<h3 style='text-indent:;margin-left: 3em'>2.{$i}.1 header：</h3>";
+                        $Word              .= "<div style='font-size:12px;margin-left: 4em;background-color:#ececec;padding: 5px;border-radius: 5px;'>".print_r($rs['api_header'],true)."</div>";
+                    }
+                    
+                    if( !empty($rs['api_request']) ){
+                        $Word              .= "<h3 style='text-indent:;margin-left: 3em'>2.{$i}.2 Request：</h3>";
+                        $Word              .= "<div style='font-size:12px;margin-left: 4em;background-color:#ececec;padding: 5px;border-radius: 5px;'><pre>".print_r($rs['api_request'],true)."</pre></div>";
+                    }
+
+                    if( !empty($rs['api_response']) ){
+                        $Word              .= "<h3 style='text-indent:;margin-left: 3em'>2.{$i}.3 可能返回的值模拟：</h3>";
+                        $Word              .= "<div style='font-size:12px;margin-left: 4em;background-color:#ececec;padding: 5px;border-radius: 5px;'><pre>".print_r($rs['api_response_json'],true)."</pre></div>";
+                    }
+
+                    $i++;
+                }
+            }
+            
+            $Word                   = iconv("utf-8", "gb2312", $Word);
+            
+            $FileName               = $ObjectInfo['object_name']."-".date("Y年m月d日")."版本";
+            header('Content-Type:application/msword');
+            header('Content-Disposition: attachment; filename="'.$FileName.'.doc"');
+            echo '<html xmlns:o="urn:schemas-microsoft-com:office:office"
+                    xmlns:w="urn:schemas-microsoft-com:office:word"
+                    xmlns="http://www.w3.org/TR/REC-html40">
+                    <style>h1{font-size:18px;}h2{font-size:16px}h3{font-size:14px}div{font-size:12px}</style>
+                    <body style="font-size:12px;padding:2em;">';
+            echo $Word;
+            exit;
+        }
+        
+        
         
         //导出为网页
         $HTML                      = file_get_contents("index.html");
         
-        $ObjectAll                 = get_object();
-        $Object[$ObjectID]         = $ObjectAll[$ObjectID];
-        $ApiAll                    = get_json($ObjectID);
-        
-        $ApiAll                    = ApiRowToJson($ApiAll);
-        
         $SelfURL                   = "http://".$_SERVER['HTTP_HOST']."/".$_SERVER['REQUEST_URI'];
         $SelfURL                   = preg_replace('/api.php[^\r]+/i','index.html',$SelfURL);
         
-        $FileName                  = $Object[$ObjectID]['object_name']."-".date("Y年m月d日")."版本";
+        $FileName                  = $ObjectInfo['object_name']."-".date("Y年m月d日")."版本";
         $HTML                      = preg_replace('/LocalObject[ ]+\=[ ]+null;/i', "LocalObject = " . json_encode($Object), $HTML);
         $HTML                      = preg_replace('/LocalApiRow[ ]+\=[ ]+null;/i', "LocalApiRow = " . json_encode($ApiAll), $HTML);
         $HTML                      = preg_replace('/\<title\>[^<]+/i', "<title>{$FileName}", $HTML);
