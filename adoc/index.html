@@ -519,7 +519,8 @@ select{
 	                    	[<span name="but_resp_add" class="dspanExp but" onclick="resp_newchilds(this,'+')" title="在后面增加一个同级元素">✚</span>
 	                    	<span name="but_resp_rm" class="dspanExp but" onclick="resp_newchilds(this,'-')" title="移除当前元素">✖</span>
 	                    	<span name="but_resp_up" class="dspanExp but" onclick="resp_newchilds(this,'^')" title="上移元素">▲</span>]
-	                    	[<span name="but_resp_dadd" class="dspanExp but" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">↩</span>
+	                    	[<!--<span name="but_resp_dadd" class="dspanExp but" onclick="resp_newchilds(this,'-+')" title="在后面增加一个下级元素">↩</span>-->
+	                    	<span name="but_resp_dadd" class="dspanExp but" onclick="resp_newchilds(this,'--')" title="删除本级元素与下级元素">≠</span>
 	                    	<span name="but_resp_copy" class="dspanExp but" onclick="resp_newchilds(this,'c')" title="复制本级元素与下级元素">❒</span>]
 	                    </td>
 	                </tr>
@@ -588,7 +589,7 @@ select{
             <div class="dtr" api_id="{api_id}">
                 <span class="dspan ApiName"><span class="bg{api_type}"></span>{api_name}&nbsp;&nbsp;<span class="iedit" title="修改接口" onclick="edit_api('{api_id}')"></span><span class="idel" title="删除接口" onclick="del_api('{api_id}')"></span></span>
                 <div style="height:10px;"></div>
-                <span class="dspan ApiURL">{api_url}</span>
+                <span class="dspan ApiURL">{api_url}&nbsp;&nbsp;&nbsp;&nbsp;<a href="{api_url}" target="_black">[A]</a></span>
                 <div style="height:10px;"></div>
                 <span class="dspan">{api_exp}</span>
                 <div style="height:20px;"></div>
@@ -1197,8 +1198,9 @@ function resp_newtr(Row){
 }
 
 function resp_newchilds(Ths,Act){
-	var ThsDom  = $(Ths).parent().parent();
-	var ThsID	= ThsDom.find("span[name='resp_left_int']").text();
+	var ThsDom     = $(Ths).parent().parent();
+	var ThsID      = ThsDom.find("span[name='resp_left_int']").text();
+	var IsNumber   = /^[0-9]*$/;
         
 	if( Act=="-" ){
 		ThsDom.remove();
@@ -1243,6 +1245,38 @@ function resp_newchilds(Ths,Act){
         ThsDom.prev().remove();
 	}
 	
+	//移除本级与下级
+	if( Act=="--" ){
+	    var NextDom    = ThsDom.nextAll();
+	    var NextDel    = true;
+	    
+	    if( NextDom!=undefined && NextDom!=null  ){
+	        for(var i=0;i<NextDom.length;i++){
+	            NextID         = $(NextDom[i]).find("span[name='resp_left_int']").text();
+	            
+                //如果等级高于当前,则跳出
+                if( NextID.length<ThsID.length )break;
+                
+                //移除该等级
+                if( NextID.length==ThsID.length ){
+                    NextDel     = false;
+                }
+                
+                if( NextDel==true ){
+                    NextDom[i].remove();
+                }else{
+                    var NextInp    = $(NextDom[i]).find("input[name='new_apiresponse_name']");
+                    var NextInpVal = NextInp.val();
+                    if( IsNumber.test( NextInpVal )){
+                        NextInp.val( parseInt(NextInpVal)-1 );
+                    }
+                }
+	        }
+	    }
+	    
+	    ThsDom.remove();
+	}
+	
 	//复制本级别与下一个级别
 	if( Act=='c' ){
 	    
@@ -1271,6 +1305,33 @@ function resp_newchilds(Ths,Act){
                 InpRow.push( $(Inp[i]).val() );
             }
             NewInp.push( InpRow );
+	    }
+	    
+	    
+	    //判断复制的第一个元素的key是数字，则自动加1
+	    if( IsNumber.test(NewInp[0][1]) ){
+	            
+	            var ThsInt = ThsDom.find("input[name='new_apiresponse_name']");
+	                ThsInt.val( parseInt(ThsInt.val())+1 );
+	            
+	            NextDom    = ThsDom.nextAll();
+	            NextID     = "";
+	        if( NextDom!=undefined && NextDom!=null ){
+	            for(var i=0;i<NextDom.length;i++){
+	                NextID = $(NextDom[i]).find("span[name='resp_left_int']").text();
+	                
+	                //如果等级高于当前,则跳出
+                    if( NextID.length<ThsID.length )break;
+                    //如果等级等于当前,同时是数字,则+1
+	                if( NextID.length==ThsID.length ){
+	                    var NextInp    = $(NextDom[i]).find("input[name='new_apiresponse_name']");
+	                    var NextInpVal = NextInp.val();
+	                    if( IsNumber.test( NextInpVal )){
+	                        NextInp.val( parseInt(NextInpVal)+1 );
+	                    }
+	                }
+	            }
+	        }
 	    }
 	    
 	    for(var i=0;i<NewInp.length;i++){

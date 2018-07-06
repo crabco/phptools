@@ -314,18 +314,26 @@ function run(){
                     $Word          .= "<div style='margin-left: 3em;margin-top:10px;'>请求方式: <b>".strtoupper($rs['api_type'])."</b></div>";
                     
                     if( !empty($rs['api_header']) ){
-                        $Word              .= "<h3 style='text-indent:;margin-left: 3em'>2.{$i}.1 header：</h3>";
+                        $Word              .= "<li style='text-indent:;margin-left: 4em'>2.{$i}.1 header：</li>";
                         $Word              .= "<div style='font-size:12px;margin-left: 4em;background-color:#ececec;padding: 5px;border-radius: 5px;'>".print_r($rs['api_header'],true)."</div>";
                     }
                     
                     if( !empty($rs['api_request']) ){
-                        $Word              .= "<h3 style='text-indent:;margin-left: 3em'>2.{$i}.2 Request：</h3>";
+                        $Word              .= "<li style='text-indent:;margin-left: 4em'>2.{$i}.2 Request：</li>";
                         $Word              .= "<div style='font-size:12px;margin-left: 4em;background-color:#ececec;padding: 5px;border-radius: 5px;'><pre>".print_r($rs['api_request'],true)."</pre></div>";
                     }
 
                     if( !empty($rs['api_response']) ){
-                        $Word              .= "<h3 style='text-indent:;margin-left: 3em'>2.{$i}.3 可能返回的值模拟：</h3>";
-                        $Word              .= "<div style='font-size:12px;margin-left: 4em;background-color:#ececec;padding: 5px;border-radius: 5px;'><pre>".print_r($rs['api_response_json'],true)."</pre></div>";
+                        $Word              .= "<li style='text-indent:;margin-left: 4em'>2.{$i}.3 可能返回的值模拟：</li><br>";
+                        
+                        $Word              .= "<table  border=\"1\" cellspacing=\"0\" cellpadding=\"5\" bordercolor=\"#000000\" width=\"100%\" style=\"border-collapse:collapse;margin-left: 4em;\">";
+                        foreach($rs['api_response'] as $vvs=>$rrs){
+                            $left               = str_pad("", $rrs['left'], "..");
+                            $Word              .= "<tr><td style='background-color:#fff;'>{$left}{$rrs['name']}</td><td style='background-color:#fff;>{$rrs['value']}</td><td style='background-color:#fff;'>{$rrs['exp']}</td></tr>";
+                        }
+                        $Word              .= "</table><br>";
+                        
+                        $Word              .= "<div style='margin-left: 4em;background-color:#ececec;padding: 5px;border-radius: 5px;'><pre>".print_r($rs['api_response_json'],true)."</pre></div>";
                     }
 
                     $i++;
@@ -340,7 +348,7 @@ function run(){
             echo '<html xmlns:o="urn:schemas-microsoft-com:office:office"
                     xmlns:w="urn:schemas-microsoft-com:office:word"
                     xmlns="http://www.w3.org/TR/REC-html40">
-                    <style>h1{font-size:18px;}h2{font-size:16px}h3{font-size:14px}div{font-size:12px}</style>
+                    <style>h1{font-size:18px;}h2{font-size:16px}h3{font-size:14px}div{font-size:12px}pre{font-size:10px;}td{font-size:10px;}</style>
                     <body style="font-size:12px;padding:2em;">';
             echo $Word;
             exit;
